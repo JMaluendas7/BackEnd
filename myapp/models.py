@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser, Group, Permission
 
 
 class TipoDocumento(models.Model):
-    id_tipoDocumento = models.AutoField(primary_key=True)
+    id_tipodocumento = models.AutoField(primary_key=True)
     nombreDoc = models.CharField(max_length=99, null=False)
     denominacion = models.CharField(max_length=5, null=False, unique=True)
     estado = models.BooleanField(default=True)
@@ -50,15 +50,15 @@ class Colaboradores(models.Model):
         Empresas, on_delete=models.CASCADE)
     contrato_id = models.IntegerField(unique=True)
     ciudad = models.CharField(max_length=100)
-    departamento = models.CharField(max_length=100)
     fecha_registro = models.DateTimeField(auto_now_add=True)
 
 
 class Login(AbstractUser):
     id_login = models.AutoField(primary_key=True)
-    colaborador_id = models.IntegerField(default=7)
+    colaborador_id = models.IntegerField()
     groups = models.ManyToManyField(Group, related_name='logins', blank=True)
-    user_permissions = models.ManyToManyField(Permission, related_name='logins', blank=True)
+    user_permissions = models.ManyToManyField(
+        Permission, related_name='logins', blank=True)
 
 
 class Modulos(models.Model):

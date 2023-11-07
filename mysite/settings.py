@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -124,6 +126,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -132,15 +135,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'myapp.Login'
 
+CORS_ALLOW_ALL_ORIGINS = False
+
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173", 
-    # ...
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    'http://127.0.0.1:8000',
 ]
 
-# Habilita el intercambio de cookies y encabezados de autenticación si es necesario
+# Intercambio de Cookies
 CORS_ALLOW_CREDENTIALS = True
 
-# Configura los encabezados permitidos
+# Encabezados que permito
 CORS_ALLOW_HEADERS = [
     "accept",
     "accept-encoding",
@@ -153,7 +159,6 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
 ]
 
-# Configura los métodos HTTP permitidos
 CORS_ALLOW_METHODS = [
     "DELETE",
     "GET",
@@ -163,5 +168,4 @@ CORS_ALLOW_METHODS = [
     "PUT",
 ]
 
-# Configura la máxima edad de las solicitudes preflight (OPTIONS)
-CORS_PREFLIGHT_MAX_AGE = 86400  # 24 horas (ajusta según tus necesidades)
+CORS_PREFLIGHT_MAX_AGE = 86400  # 24 horas

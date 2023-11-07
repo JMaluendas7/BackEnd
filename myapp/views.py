@@ -2,7 +2,8 @@ from django.shortcuts import render
 from rest_framework.viewsets import ViewSet
 from rest_framework.decorators import action
 from django.http import JsonResponse
-from .models import Colaboradores, Permisos, Login
+from .models import Colaboradores, Permisos, Login, TipoDocumento
+from .serializers import ColaboradoresSlr
 
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
@@ -14,21 +15,22 @@ from django.views.decorators.http import require_http_methods
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
+from rest_framework import status
 # Create your Views here.
 
 
-@login_required
-def index(request):
-    return (render(request, 'home.html'))
+# @login_required
+# def index(request):
+#     return (render(request, 'home.html'))
 
 
-def salir(request):
-    logout(request)
-    return redirect('/')
+# def salir(request):
+#     logout(request)
+#     return redirect('/')
 
 
 class ColaboradoresView(ViewSet):
-    @login_required
+    # @login_required
     @action(detail=False, methods=['GET'])
     def get(self, request, num_Documento=None):
         if num_Documento is None:
@@ -63,23 +65,30 @@ class ColaboradoresView(ViewSet):
         return JsonResponse(data, safe=False)
 
     @action(detail=True, methods=['POST'])
-    def post(self, request):
-        num_Documento = request.POST.get('numDocumento')
-        nombres = request.POST.get('nombres')
-        apellidos = request.POST.get('apellidos')
-        telefono = request.POST.get('telefono')
-        direccion = request.POST.get('direccion')
-        email = request.POST.get('email')
-        contrato_id = request.POST.get('contrato_id')
-        ciudad = request.POST.get('ciudad')
-        departamento = request.POST.get('departamento')
-        tipo_documento_id = request.POST.get('tipo_documento')
-        rol_id = request.POST.get('rol_id')
-        empresa_id = request.POST.get('empresa')
-        Colaboradores.objects.create(num_Documento=num_Documento, nombres=nombres, apellidos=apellidos, telefono=telefono, direccion=direccion, email=email,
-                                     contrato_id=contrato_id, ciudad=ciudad, departamento=departamento, tipo_documento_id=tipo_documento_id, rol_id=rol_id, empresa_id=empresa_id)
-        response_data = {'mensaje': 'Colaborador creado con éxito'}
-        return JsonResponse(response_data)
+    def post(self, request, format=None):
+        serializer = ColaboradoresSlr(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        # num_DocumentoR = request.POST.get('numDocumento')
+        # num_Documento = TipoDocumento.objects.get(id_tipodocumento=1)
+        # nombres = request.POST.get('nombre')
+        # apellidos = request.POST.get('apellido')
+        # telefono = request.POST.get('telefono')
+        # direccion = request.POST.get('direccion')
+        # email = request.POST.get('email')
+        # contrato_id = request.POST.get('contrato_id')
+        # ciudad = request.POST.get('ciudad')
+        # departamento = request.POST.get('departamento')
+        # tipo_documento_id = request.POST.get('tipo_documento')
+        # rol_id = request.POST.get('rol_id')
+        # empresa_id = request.POST.get('empresa')
+        # Colaboradores.objects.create(num_Documento=num_Documento, nombres=nombres, apellidos=apellidos, telefono=telefono, direccion=direccion, email=email,
+        #                              contrato_id=contrato_id, ciudad=ciudad, departamento=departamento, tipo_documento_id=tipo_documento_id, rol_id=int(rol_id), empresa_id=int(empresa_id))
+        # response_data = {'mensaje': 'Colaborador creado con éxito'}
+        # return JsonResponse(response_data)
 
     @action(detail=True, methods=['PUT'])
     def put(self, request, num_Doc=1234):
@@ -116,6 +125,7 @@ class ColaboradoresView(ViewSet):
 
         return JsonResponse(response_data)
 
+
 @method_decorator(csrf_exempt, name='dispatch')
 class MenuView(ViewSet):
     @action(detail=False, methods=['GET'])
@@ -146,7 +156,8 @@ class MenuView(ViewSet):
                     'id_modulo': mod.id_modulo,
                     'nom_modulo': mod.nom_modulo,
                     'url_img': mod.url_img,
-                    'sub_items': data_sub_menu,
+                    'isOpen': False,
+                    'subItems': data_sub_menu,
                 })
 
             return Response(data_menu)
