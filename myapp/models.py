@@ -49,7 +49,7 @@ class Colaboradores(models.Model):
     empresa_id = models.ForeignKey(
         Empresas, on_delete=models.CASCADE)
     contrato_id = models.IntegerField(unique=True)
-    ciudad = models.CharField(max_length=100)
+    ciudad = models.CharField(max_length=100, null=False)
     fecha_registro = models.DateTimeField(auto_now_add=True)
 
 

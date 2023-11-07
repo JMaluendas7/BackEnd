@@ -15,12 +15,17 @@ router.register('permisos', api.PermisosViewSet, "Permisos")
 
 urlpatterns = [
     path('api/', include(router.urls)),
-#     path('', views.index, name='Login'),
-#     path('salir/', views.salir, name='salir'),
+    #     path('', views.index, name='Login'),
+    #     path('salir/', views.salir, name='salir'),
+    # Crud Colaboradores
     path('colaboradores/',
          views.ColaboradoresView.as_view({'get': 'get'}), name='Lista de Colaboradores'),
     path('addColaboradores/',
-         views.ColaboradoresView.as_view, name='Registro de Colaboradores'),
+         views.ColaboradoresView.as_view({'post': 'post'}), name='Registro de Colaboradores'),
+    # Crud Usuarios
+    path('addUsers/', views.UsersView.as_view({'post': 'post'}),
+         name='Registro de Usuarios que se logean'),
+    # Lectura de menu
     path('menu/<rol>/',
          views.MenuView.as_view({'get': 'get'}), name='Lista Menu'),
 ]
