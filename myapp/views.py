@@ -88,22 +88,23 @@ class ColaboradoresView(ViewSet):
         return JsonResponse(response_data)
 
     @action(detail=True, methods=['PUT'])
-    def put(self, request, num_Doc=1234):
+    def put(self, request, id):
         try:
-            num_documento = request.POST.get('numDocumento')
-            nombres = request.POST.get('nombres')
-            apellidos = request.POST.get('apellidos')
-            telefono = request.POST.get('telefono')
-            direccion = request.POST.get('direccion')
+            num_documento = request.POST.get('num_documento')
+            nombres = request.POST.get('nombre')
+            apellidos = request.POST.get('apellido')
             email = request.POST.get('email')
-            contrato_id = request.POST.get('contrato_id')
+            direccion = request.POST.get('direccion')
             ciudad = request.POST.get('ciudad')
-            departamento = request.POST.get('departamento')
-            tipo_documento_id = request.POST.get('tipo_documento')
+            telefono = request.POST.get('telefono')
+            contrato_id = request.POST.get('contrato_id')
+            empresa_id = request.POST.get('empresa_id')
+            empresa_id = Empresas.objects.get(id_empresa=empresa_id)
             rol_id = request.POST.get('rol_id')
-            empresa_id = request.POST.get('empresa')
-            Colaboradores.objects.filter(num_documento=num_Doc).update(num_documento=num_documento, nombres=nombres, apellidos=apellidos, telefono=telefono, direccion=direccion,
-                                                                       email=email, contrato_id=contrato_id, ciudad=ciudad, departamento=departamento, tipo_documento_id=tipo_documento_id, rol_id=rol_id, empresa_id=empresa_id)
+
+            id_rol = Roles.objects.get(id_rol=rol_id)
+            Colaboradores.objects.filter(num_documento=num_documento).update(num_documento=num_documento, nombres=nombres, apellidos=apellidos, telefono=telefono, direccion=direccion,
+                                                                             email=email, contrato_id=contrato_id, ciudad=ciudad, rol_id=rol_id, empresa_id=empresa_id)
             response_data = {'mensaje': 'Colaborador actualizado con éxito'}
         except Colaboradores.DoesNotExist:
             return JsonResponse({'error': 'Colaborador no encontrado'}, status=404)

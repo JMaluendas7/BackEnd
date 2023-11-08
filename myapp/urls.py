@@ -22,6 +22,8 @@ urlpatterns = [
          views.ColaboradoresView.as_view({'get': 'get'}), name='Lista de Colaboradores'),
     path('addColaboradores/',
          views.ColaboradoresView.as_view({'post': 'post'}), name='Registro de Colaboradores'),
+    path('colaboradoresput/<id>/',
+         views.ColaboradoresView.as_view({'put': 'put'}), name="Editar Colaborador"),
     # Crud Usuarios
     path('addUsers/', views.UsersView.as_view({'post': 'post'}),
          name='Registro de Usuarios que se logean'),
