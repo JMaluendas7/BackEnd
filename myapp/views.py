@@ -90,31 +90,40 @@ class ColaboradoresView(ViewSet):
     @action(detail=True, methods=['PUT'])
     def put(self, request, id):
         try:
-            num_documento = request.POST.get('num_documento')
-            nombres = request.POST.get('nombre')
-            apellidos = request.POST.get('apellido')
-            email = request.POST.get('email')
-            direccion = request.POST.get('direccion')
-            ciudad = request.POST.get('ciudad')
-            telefono = request.POST.get('telefono')
-            contrato_id = request.POST.get('contrato_id')
-            empresa_id = request.POST.get('empresa_id')
-            empresa_id = Empresas.objects.get(id_empresa=empresa_id)
-            rol_id = request.POST.get('rol_id')
+            colaborador = Colaboradores.objects.get(num_documento=id)
 
-            id_rol = Roles.objects.get(id_rol=rol_id)
-            Colaboradores.objects.filter(num_documento=num_documento).update(num_documento=num_documento, nombres=nombres, apellidos=apellidos, telefono=telefono, direccion=direccion,
-                                                                             email=email, contrato_id=contrato_id, ciudad=ciudad, rol_id=rol_id, empresa_id=empresa_id)
-            response_data = {'mensaje': 'Colaborador actualizado con éxito'}
-        except Colaboradores.DoesNotExist:
-            return JsonResponse({'error': 'Colaborador no encontrado'}, status=404)
+            data_to_update = request.data
+            print(data_to_update)
+            colaborador.nombres = data_to_update.get(
+                'nombres', colaborador.nombres)
+            colaborador.apellidos = data_to_update.get(
+                'apellidos', colaborador.apellidos)
+            colaborador.telefono = data_to_update.get(
+                'telefono', colaborador.telefono)
+            colaborador.email = data_to_update.get('email', colaborador.email)
+            # colaborador.contrato_id = data_to_update.get(
+            #     'contrato_id', colaborador.contrato_id)
+            colaborador.direccion = data_to_update.get(
+                'direccion', colaborador.direccion)
+            colaborador.ciudad = data_to_update.get(
+                'ciudad', colaborador.ciudad)
+            # colaborador.rol_id = data_to_update.get(
+            #     'rol_id', colaborador.rol_id)
+            # colaborador.empresa_id = data_to_update.get(
+            #     'empresa_id', colaborador.empresa_id)
 
-        return JsonResponse(response_data)
+            colaborador.save()
+
+            return Response("Colaborador actualizado exitosamente", status=status.HTTP_200_OK)
+        except colaborador.DoesNotExist:
+            return Response("Colaborador no encontrado", status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response(f"Error al actualizar el colaborador: {str(e)}", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @action(detail=True, methods=['DELETE'])
-    def delete(self, request, num_Doc=1234):
+    def delete(self, request, id):
         try:
-            usuario = Colaboradores.objects.get(num_documento=num_Doc)
+            usuario = Colaboradores.objects.get(num_documento=id)
             usuario.delete()
             response_data = {'mensaje': 'Colaborador eliminado con éxito'}
 
