@@ -84,9 +84,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'apps5',
         'USER': 'postgres',
-        'PASSWORD': '8080',
+        'PASSWORD': 'PRUEBA2023',
         'HOST': 'localhost',
-        'PORT': 5432,
+        'PORT': 5433,
     }
 }
 
@@ -96,7 +96,8 @@ DATABASES = {
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 SESSION_COOKIE_SECURE = False  # Establece en True en producción si usas HTTPS
 
-SESSION_COOKIE_AGE = 1209600  # Duración de la sesión en segundos (2 semanas por defecto)
+# Duración de la sesión en segundos (2 semanas por defecto)
+SESSION_COOKIE_AGE = 1209600
 LOGIN_REDIRECT_URL = 'http://localhost:5173/'
 
 

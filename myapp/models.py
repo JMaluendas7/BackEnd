@@ -36,10 +36,9 @@ class Contratos(models.Model):
 
 
 class Colaboradores(models.Model):
-    id_colaborador = models.AutoField(primary_key=True),
+    num_documento = models.IntegerField(primary_key=True)
     tipo_documento_id = models.ForeignKey(
         TipoDocumento, on_delete=models.CASCADE)
-    num_documento = models.IntegerField(null=False, unique=True)
     nombres = models.CharField(max_length=99, null=False)
     apellidos = models.CharField(max_length=99, null=False)
     telefono = models.IntegerField(null=False)
@@ -55,7 +54,8 @@ class Colaboradores(models.Model):
 
 class Login(AbstractUser):
     id_login = models.AutoField(primary_key=True)
-    colaborador_id = models.IntegerField()
+    documento_num = models.ForeignKey(
+        Colaboradores, on_delete=models.CASCADE, related_name='user_login', to_field='num_documento')
     groups = models.ManyToManyField(Group, related_name='logins', blank=True)
     user_permissions = models.ManyToManyField(
         Permission, related_name='logins', blank=True)

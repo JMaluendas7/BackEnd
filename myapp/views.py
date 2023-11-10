@@ -2,23 +2,17 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.viewsets import ViewSet
 from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework import status
 from django.http import JsonResponse
 from .models import Colaboradores, Permisos, Login, TipoDocumento, Roles, Empresas
-
-from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, logout
+from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout
 from django.contrib.auth.hashers import make_password
-
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from rest_framework.viewsets import ViewSet
-from rest_framework import status
-import json
 import jwt
 
 # Create your Views here.
@@ -33,22 +27,24 @@ def salir(request):
     logout(request)
     return redirect('/')
 
+
 class LoginView(APIView):
     def post(self, request):
-        user = authenticate(username=request.data["username"], password=request.data["password"])
+        user = authenticate(
+            username=request.data["username"], password=request.data["password"])
         if user:         # Genera un JWT
             payload = {"user_id": user.colaborador_id,
                        "username": user.username,
                        "nombre": user.first_name,
-                       "apellido": user.last_name}
+                       "apellido": user.last_name,
+                       "colaborador_id": user.colaborador_id.num_documento}
             token = jwt.encode(payload, 'your-secret-key', algorithm='HS256')
             return Response({"token": token, "username": user.username, "nombre": user.first_name, "apellido": user.last_name})
         else:
             return Response({"error": "Credenciales inválidas"}, status=400)
-        
+
 
 class ColaboradoresView(ViewSet):
-    @login_required
     @action(detail=False, methods=['GET'])
     def get(self, request, num_Documento=None):
         if num_Documento is None:
@@ -80,6 +76,7 @@ class ColaboradoresView(ViewSet):
                 return JsonResponse({'error': 'Usuario no encontrado'}, status=404)
 
         return JsonResponse(data, safe=False)
+
     @login_required
     @action(detail=True, methods=['POST'])
     def post(self, request, format=None):
@@ -164,7 +161,7 @@ class UsersView(ViewSet):
         email = colaborador.email
 
         Login.objects.create(password=passs, is_superuser=superuser, username=username, first_name=first_name,
-                             last_name=last_name, email=email, is_staff=True, is_active=True, colaborador_id=id_user)
+                             last_name=last_name, email=email, is_staff=True, is_active=True, documento_num=id_user)
         response_data = {'mensaje': 'Colaborador creado con éxito'}
         return JsonResponse(response_data)
 
