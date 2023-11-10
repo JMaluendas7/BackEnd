@@ -84,11 +84,20 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'apps5',
         'USER': 'postgres',
-        'PASSWORD': 'PRUEBA2023',
+        'PASSWORD': '8080',
         'HOST': 'localhost',
-        'PORT': 5433,
+        'PORT': 5432,
     }
 }
+
+# settings.py
+
+# Habilita las sesiones
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+SESSION_COOKIE_SECURE = False  # Establece en True en producción si usas HTTPS
+
+SESSION_COOKIE_AGE = 1209600  # Duración de la sesión en segundos (2 semanas por defecto)
+LOGIN_REDIRECT_URL = 'http://localhost:5173/'
 
 
 # Password validation

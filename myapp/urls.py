@@ -1,5 +1,7 @@
 from rest_framework import routers
 from django.urls import path, include
+from django.contrib.auth.views import LoginView as login_view
+
 from . import api
 from . import views
 
@@ -14,6 +16,7 @@ router.register('Modulos', api.ModulosViewSet, "Modulos")
 router.register('permisos', api.PermisosViewSet, "Permisos")
 
 urlpatterns = [
+    path('login/', views.LoginView.as_view(), name='Inicio de sesion'),
     path('api/', include(router.urls)),
     #     path('', views.index, name='Login'),
     #     path('salir/', views.salir, name='salir'),

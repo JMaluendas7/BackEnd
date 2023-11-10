@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from rest_framework.views import APIView
 from rest_framework.viewsets import ViewSet
 from rest_framework.decorators import action
 from django.http import JsonResponse
@@ -17,6 +18,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from rest_framework import status
+import json
+import jwt
 
 # Create your Views here.
 
@@ -26,13 +29,26 @@ from rest_framework import status
 #     return (render(request, 'home.html'))
 
 
-# def salir(request):
-#     logout(request)
-#     return redirect('/')
+def salir(request):
+    logout(request)
+    return redirect('/')
 
+class LoginView(APIView):
+    def post(self, request):
+        user = authenticate(username=request.data["username"], password=request.data["password"])
+        if user:         # Genera un JWT
+            payload = {"user_id": user.colaborador_id,
+                       "username": user.username,
+                       "nombre": user.first_name,
+                       "apellido": user.last_name}
+            token = jwt.encode(payload, 'your-secret-key', algorithm='HS256')
+            return Response({"token": token, "username": user.username, "nombre": user.first_name, "apellido": user.last_name})
+        else:
+            return Response({"error": "Credenciales inválidas"}, status=400)
+        
 
 class ColaboradoresView(ViewSet):
-    # @login_required
+    @login_required
     @action(detail=False, methods=['GET'])
     def get(self, request, num_Documento=None):
         if num_Documento is None:
@@ -64,7 +80,7 @@ class ColaboradoresView(ViewSet):
                 return JsonResponse({'error': 'Usuario no encontrado'}, status=404)
 
         return JsonResponse(data, safe=False)
-
+    @login_required
     @action(detail=True, methods=['POST'])
     def post(self, request, format=None):
         tipo_documento = request.POST.get('tipo_documento')
