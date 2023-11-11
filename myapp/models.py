@@ -16,8 +16,8 @@ class Empresas(models.Model):
     nit = models.CharField(max_length=12, null=False, unique=True)
     direccion = models.CharField(max_length=150)
     estado = models.BooleanField(default=True)
-    telefono1 = models.PositiveIntegerField(null=False)
-    telefono2 = models.PositiveIntegerField(null=True)
+    telefono1 = models.IntegerField(null=False)
+    telefono2 = models.IntegerField(null=True)
     email = models.EmailField(max_length=150, null=False)
     fecha_registro = models.DateTimeField(auto_now_add=True)
 
@@ -53,9 +53,8 @@ class Colaboradores(models.Model):
 
 
 class Login(AbstractUser):
-    id_login = models.AutoField(primary_key=True)
-    documento_num = models.ForeignKey(
-        Colaboradores, on_delete=models.CASCADE, related_name='user_login', to_field='num_documento')
+    documento_num = models.OneToOneField(
+        Colaboradores, on_delete=models.CASCADE, primary_key=True)
     groups = models.ManyToManyField(Group, related_name='logins', blank=True)
     user_permissions = models.ManyToManyField(
         Permission, related_name='logins', blank=True)
