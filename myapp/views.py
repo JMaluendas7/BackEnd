@@ -17,6 +17,9 @@ import jwt
 from .serializers import LoginSlr
 from rest_framework.authtoken.models import Token
 
+from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
+from django.urls import reverse_lazy
+
 # Create your Views here.
 
 
@@ -29,6 +32,26 @@ def salir(request):
     logout(request)
     return redirect('/')
 
+class CustomPasswordResetView(PasswordResetView):
+    email_template_name = 'custom_reset_password_email.html'
+    success_url = reverse_lazy('password_reset_done')
+
+    def post(self, request, *args, **kwargs):
+        num_documento = request.POST.get('num_documento')
+        email = request.POST.get('email')
+
+        # Verificar que los campos num_documento y email coincidan en la base de datos
+        user_exists = Login.objects.filter(num_documento=num_documento, email=email).exists()
+
+        if user_exists:
+            # Lógica para enviar el correo electrónico de restablecimiento de contraseña
+            return JsonResponse({'message': 'Correo de restablecimiento enviado.'})
+        else:
+            # Lógica para manejar el caso en que no se encuentre el usuario en la base de datos
+            return JsonResponse({'error': 'No se encontró un usuario con la combinación de número de documento y correo electrónico.'}, status=400)
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    success_url = reverse_lazy('password_reset_complete')
 
 class LoginView(APIView):
     def post(self, request):
@@ -38,7 +61,8 @@ class LoginView(APIView):
             # token, created = Token.objects.get_or_create(user=user)
             payload = {"username": user.username,
                        "nombre": user.first_name,
-                       "apellido": user.last_name,}
+                       "apellido": user.last_name,
+                       "rol_id": user.documento_num.rol_id.id_rol}
             # token_value = token.key if created else Token.objects.get(user=user).key
             token = jwt.encode(payload, 'your-secret-key', algorithm='HS256')
 
@@ -47,6 +71,7 @@ class LoginView(APIView):
                              "username": user.username,
                              "nombre": user.first_name,
                              "apellido": user.last_name,
+                             "rol_id": user.documento_num.rol_id.id_rol,
                             })
         else:
             return Response({"error": "Credenciales inválidas"}, status=400)

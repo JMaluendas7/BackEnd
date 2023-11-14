@@ -1,6 +1,13 @@
 from rest_framework import routers
 from django.urls import path, include
 from django.contrib.auth.views import LoginView as login_view
+from django.urls import path
+from django.contrib.auth.views import (
+    PasswordResetView,
+    PasswordResetDoneView,
+    PasswordResetConfirmView,
+    PasswordResetCompleteView,
+)
 
 from . import api
 from . import views
@@ -35,4 +42,11 @@ urlpatterns = [
     # Lectura de menu
     path('menu/<rol>/',
          views.MenuView.as_view({'get': 'get'}), name='Lista Menu'),
+    path('reset_password/', PasswordResetView.as_view(), name='password_reset'),
+    path('reset_password/done/', PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('reset_password/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('reset_password/complete/', PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+#     path('reset_password/', views.CustomPasswordResetView.as_view(), name='password_reset'),
+#     path('reset_password/<uidb64>/<token>/', views.CustomPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+
 ]

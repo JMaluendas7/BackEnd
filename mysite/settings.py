@@ -177,3 +177,11 @@ CORS_ALLOW_METHODS = [
 ]
 
 CORS_PREFLIGHT_MAX_AGE = 86400  # 24 horas
+
+# Datos para el envio de correos
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'your_smtp_server'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'jmaluendase.com'
+EMAIL_HOST_PASSWORD = 'JMalu7Bussi'
