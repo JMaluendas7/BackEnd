@@ -84,9 +84,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'apps5',
         'USER': 'postgres',
-        'PASSWORD': '8080',
+        'PASSWORD': 'PRUEBA2023',
         'HOST': 'localhost',
-        'PORT': 5432,
+        'PORT': 5433,
     }
 }
 
@@ -145,7 +145,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'myapp.Login'
 
-CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_ALL_ORIGINS = True  # Activo solo por pruebas
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
@@ -153,6 +153,7 @@ CORS_ALLOWED_ORIGINS = [
 
 # Intercambio de Cookies
 CORS_ALLOW_CREDENTIALS = True
+CORS_DEBUG = True
 
 # Encabezados que permito
 CORS_ALLOW_HEADERS = [

@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.contrib.auth.views import PasswordResetView
 from rest_framework.views import APIView
 from rest_framework.viewsets import ViewSet
 from rest_framework.decorators import action
@@ -8,17 +8,21 @@ from django.http import JsonResponse
 from .models import Colaboradores, Permisos, Login, TipoDocumento, Roles, Empresas
 from django.contrib.auth import authenticate, logout
 from django.shortcuts import redirect
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
-from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_http_methods
 import jwt
-from .serializers import LoginSlr
-from rest_framework.authtoken.models import Token
 
-from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
+# Importaciones para el reset de contraseña
 from django.urls import reverse_lazy
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
+from django.utils.translation import gettext as _
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 
 # Create your Views here.
 
@@ -32,32 +36,96 @@ def salir(request):
     logout(request)
     return redirect('/')
 
-class CustomPasswordResetView(PasswordResetView):
-    email_template_name = 'custom_reset_password_email.html'
-    success_url = reverse_lazy('password_reset_done')
 
+class ResetPasswordView(PasswordResetView):
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        return JsonResponse({'message': 'Password reset email sent successfully.'})
+
+
+reset_password_request = ResetPasswordView.as_view()
+
+
+class PassResetView(PasswordResetView):
+    @method_decorator(csrf_exempt, name='dispatch')
     def post(self, request, *args, **kwargs):
         num_documento = request.POST.get('num_documento')
         email = request.POST.get('email')
 
-        # Verificar que los campos num_documento y email coincidan en la base de datos
-        user_exists = Login.objects.filter(num_documento=num_documento, email=email).exists()
+        # Validacion de usuario
+        user_exists = Login.objects.filter(
+            documento_num=num_documento, email=email).exists()
 
         if user_exists:
-            # Lógica para enviar el correo electrónico de restablecimiento de contraseña
-            return JsonResponse({'message': 'Correo de restablecimiento enviado.'})
+            # Generar token
+            user = Login.objects.get(documento_num=num_documento, email=email)
+            uid = urlsafe_base64_encode(force_bytes(user.pk)).decode()
+            token = default_token_generator.make_token(user)
+
+            # Url de reset
+            reset_url = f"{request.scheme}://{request.get_host()}/reset-password/{uid}/{token}/"
+
+            # Envio del email
+            subject = 'Restablecimiento de contraseña'
+            message = render_to_string('registration/messageRecovery.txt', {
+                                       'reset_url': reset_url})
+            from_email = 'jmaluendase@gmail.com'
+            to_email = email
+
+            send_mail(subject, message, from_email, [to_email])
+
+            return JsonResponse({'message': 'Correo electronico de restablecimiento enviado'})
         else:
-            # Lógica para manejar el caso en que no se encuentre el usuario en la base de datos
-            return JsonResponse({'error': 'No se encontró un usuario con la combinación de número de documento y correo electrónico.'}, status=400)
+            return JsonResponse({'error': 'No se encontró ningún usuario con el número de documento y correo electrónico proporcionados.'}, status=400)
+
+
+# class CustomPasswordResetView(PasswordResetView):
+#     email_template_name = 'passRecoveryEmail.html'
+#     success_url = reverse_lazy('passResetOk')
+
+#     def form_valid(self, form):
+#         response = super().form_valid(form)
+
+#         # Custom logic to send email
+#         user = form.user_cache
+
+#         # Generate token and encode user ID
+#         uid = urlsafe_base64_encode(force_bytes(user.pk)).decode()
+#         token = default_token_generator.make_token(user)
+
+#         # Construct the reset URL
+#         reset_url = self.request.build_absolute_uri(
+#             reverse_lazy('password_reset_confirm', kwargs={
+#                          'uidb64': uid, 'token': token})
+#         )
+
+#         # Send the reset email
+#         subject = _('Password reset')
+#         message = render_to_string('passRecoveryEmail.txt', {
+#                                    'reset_url': reset_url})
+#         from_email = 'your_email@example.com'  # Set your own email address
+#         to_email = form.cleaned_data['email']
+
+#         send_mail(subject, message, from_email, [to_email])
+
+#         return response
+
+#     def form_invalid(self, form):
+#         response = super().form_invalid(form)
+
+#         # Custom logic for invalid form submission
+#         return JsonResponse({'error': 'Invalid form submission'}, status=400)
+
 
 class CustomPasswordResetConfirmView(PasswordResetConfirmView):
     success_url = reverse_lazy('password_reset_complete')
+
 
 class LoginView(APIView):
     def post(self, request):
         user = authenticate(
             username=request.data["username"], password=request.data["password"])
-        if user: # Genera un JWT
+        if user:  # Genera un JWT
             # token, created = Token.objects.get_or_create(user=user)
             payload = {"username": user.username,
                        "nombre": user.first_name,
@@ -72,7 +140,7 @@ class LoginView(APIView):
                              "nombre": user.first_name,
                              "apellido": user.last_name,
                              "rol_id": user.documento_num.rol_id.id_rol,
-                            })
+                             })
         else:
             return Response({"error": "Credenciales inválidas"}, status=400)
 
