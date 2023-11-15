@@ -86,9 +86,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'apps5',
         'USER': 'postgres',
-        'PASSWORD': '8080',
+        'PASSWORD': 'PRUEBA2023',
         'HOST': 'localhost',
-        'PORT': 5432,
+        'PORT': 5433,
     }
 }
 
@@ -188,7 +188,6 @@ EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
 EMAIL_HOST_USER = 'f412691b9c0ac6'
 EMAIL_HOST_PASSWORD = 'efb888accbe956'
 EMAIL_PORT = '2525'
-
 
 
 REST_FRAMEWORK = {
