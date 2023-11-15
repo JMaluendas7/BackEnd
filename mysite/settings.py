@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'myapp',
     'rest_framework',
+    'rest_framework.authtoken',
+    'djoser',
     'psycopg2',
     'corsheaders',
 ]
@@ -84,9 +86,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'apps5',
         'USER': 'postgres',
-        'PASSWORD': 'PRUEBA2023',
+        'PASSWORD': '8080',
         'HOST': 'localhost',
-        'PORT': 5433,
+        'PORT': 5432,
     }
 }
 
@@ -181,8 +183,20 @@ CORS_PREFLIGHT_MAX_AGE = 86400  # 24 horas
 
 # Datos para el envio de correos
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'your_smtp_server'
-EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'jmaluendase.com'
-EMAIL_HOST_PASSWORD = 'JMalu7Bussi'
+EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
+EMAIL_HOST_USER = 'f412691b9c0ac6'
+EMAIL_HOST_PASSWORD = 'efb888accbe956'
+EMAIL_PORT = '2525'
+
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
+
+DJOSER = {
+    'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
+}

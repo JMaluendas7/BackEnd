@@ -8,6 +8,8 @@ from django.contrib.auth.views import (
     PasswordResetConfirmView,
     PasswordResetCompleteView,
 )
+from django.contrib.auth import views as auth_views
+from djoser import views as djoser_views
 
 from . import api
 from . import views
@@ -54,4 +56,8 @@ urlpatterns = [
          views.CustomPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('api/reset_password/', views.reset_password_request,
          name='reset_password_request'),
+
+    path('password/reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
+    path('password/reset/confirm/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+
 ]
