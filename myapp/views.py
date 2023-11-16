@@ -290,6 +290,7 @@ class MenuView(ViewSet):
                     data_sub_menu.append({
                         'nom_modulo': sub_mod.nom_modulo,
                         'link': sub_mod.link,
+                        'url_img': sub_mod.url_img,
                     })
 
                 mod = modulo.modulo_id
