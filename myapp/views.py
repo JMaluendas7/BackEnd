@@ -180,26 +180,28 @@ class ColaboradoresView(ViewSet):
         return JsonResponse(data, safe=False)
 
     @action(detail=True, methods=['POST'])
-    def post(self, request, format=None):
-        tipo_documento = request.POST.get('tipo_documento')
-        num_documento = request.POST.get('numDocumento')
-        nombres = request.POST.get('nombre')
-        apellidos = request.POST.get('apellido')
-        email = request.POST.get('email')
-        direccion = request.POST.get('direccion')
-        ciudad = request.POST.get('ciudad')
-        telefono = request.POST.get('telefono')
-        contrato_id = request.POST.get('contrato_id')
-        empresa_id = request.POST.get('empresa_id')
-        empresa_id = Empresas.objects.get(id_empresa=empresa_id)
-        rol_id = request.POST.get('rol_id')
-        tipo_documento_id = TipoDocumento.objects.get(
-            id_tipodocumento=tipo_documento)
-        id_rol = Roles.objects.get(id_rol=rol_id)
-        Colaboradores.objects.create(num_documento=num_documento, nombres=nombres, apellidos=apellidos, telefono=telefono, direccion=direccion, email=email,
-                                     contrato_id=contrato_id, ciudad=ciudad, tipo_documento_id=tipo_documento_id, rol_id=id_rol, empresa_id=empresa_id)
-        response_data = {'mensaje': 'Colaborador creado con éxito'}
-        return JsonResponse(response_data)
+    def post(self, request, id_permiso, rol_id, format=None):
+        permiso = Permisos.objects.get(id_permiso=id_permiso, rol_id=rol_id)
+        if permiso.permiso_insertar:
+            tipo_documento = request.POST.get('tipo_documento')
+            num_documento = request.POST.get('numDocumento')
+            nombres = request.POST.get('nombre')
+            apellidos = request.POST.get('apellido')
+            email = request.POST.get('email')
+            direccion = request.POST.get('direccion')
+            ciudad = request.POST.get('ciudad')
+            telefono = request.POST.get('telefono')
+            contrato_id = request.POST.get('contrato_id')
+            empresa_id = request.POST.get('empresa_id')
+            empresa_id = Empresas.objects.get(id_empresa=empresa_id)
+            rol_id = request.POST.get('rol_id')
+            tipo_documento_id = TipoDocumento.objects.get(
+                id_tipodocumento=tipo_documento)
+            id_rol = Roles.objects.get(id_rol=rol_id)
+            Colaboradores.objects.create(num_documento=num_documento, nombres=nombres, apellidos=apellidos, telefono=telefono, direccion=direccion, email=email,
+                                         contrato_id=contrato_id, ciudad=ciudad, tipo_documento_id=tipo_documento_id, rol_id=id_rol, empresa_id=empresa_id)
+            response_data = {'mensaje': 'Colaborador creado con éxito'}
+            return JsonResponse(response_data)
 
     @action(detail=True, methods=['PUT'])
     def put(self, request, id):
@@ -276,30 +278,37 @@ class MenuView(ViewSet):
             raiz_modulos = Permisos.objects.filter(
                 modulo_id__id_modulo_padre=None, rol_id__id_rol=rol)
             print(raiz_modulos)
-
             data_menu = []
-
             for modulo in raiz_modulos:
                 print(modulo)
                 submodulos = Permisos.objects.filter(
                     modulo_id__id_modulo_padre=modulo.modulo_id.id_modulo, rol_id__id_rol=rol)
-
                 data_sub_menu = []
                 for submodulo in submodulos:
                     sub_mod = submodulo.modulo_id
                     data_sub_menu.append({
+                        'id_modulo': sub_mod.id_modulo,
+                        'id_permiso': submodulo.id_permiso,
                         'nom_modulo': sub_mod.nom_modulo,
                         'link': sub_mod.link,
                         'url_img': sub_mod.url_img,
+                        'insertar': submodulo.permiso_insertar,
+                        'eliminar': submodulo.permiso_eliminar,
+                        'actualizar': submodulo.permiso_actualizar,
+                        'consultar': submodulo.permiso_consultar,
+                        'reportes': submodulo.permiso_reportes,
                     })
 
                 mod = modulo.modulo_id
                 data_menu.append({
                     'id_modulo': mod.id_modulo,
+                    'id_permiso': modulo.id_permiso,
                     'nom_modulo': mod.nom_modulo,
                     'url_img': mod.url_img,
                     'isOpen': False,
+
                     'subItems': data_sub_menu,
+
                 })
 
             return Response(data_menu)
