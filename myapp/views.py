@@ -24,6 +24,37 @@ from django.utils.translation import gettext as _
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 
+# En views.py
+from .envioCorreos import send_email
+import secrets
+import string
+
+
+def generate_token():
+    # Se define la combinación de caracteres permitidos (letras mayúsculas y dígitos)
+    characters = string.ascii_uppercase + string.digits
+
+    # Se genera el token aleatorio de 6 caracteres
+    token = ''.join(secrets.choice(characters) for i in range(6))
+
+    return token
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class ResetPass(ViewSet):
+    def send_reset_email(self, request):
+        email = request.data["email"]
+        dni = request.data["dni"]
+        print(email, dni)
+        token = generate_token()
+        print(token)
+        user = Login.objects.filter(email=email, documento_num=dni)
+        if user:
+            # Llama a la función send_email desde aquí
+            send_email(email, token)
+            return Response({'message': 'Reset email sent successfully'})
+
+
 # Create your Views here.
 
 

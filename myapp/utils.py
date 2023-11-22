@@ -11,13 +11,13 @@ def send_email(identificacion, nombre, apellido, correo):
 
     # Configurar el correo electrónico
     email_origen = "asistemas@berlinasdelfonce.com"
-    email_destino = "jmaluendase@gmail.com"
+    email_destino = correo
     ruta_img = "https://saas-cms-admin-sandbox.s3.us-west-2.amazonaws.com/sites/647e59513d04a300028afa72/assets/647e59b33d04a300028afa77/Logo_berlinas_blanco_fondo-transparente_DIGITAL.png"
 
     message = MIMEMultipart()
     message["From"] = email_origen
-    message["To"] = "jmaluendase@gmail.com"
-    message["Subject"] = "Portal Propietarios - Envio Link de tutoriales"
+    message["To"] = email_destino
+    message["Subject"] = "Portal Propietarios - Complemento de videotutoriales"
 
     body = f"""
         <!DOCTYPE html>
@@ -33,13 +33,21 @@ def send_email(identificacion, nombre, apellido, correo):
                 </div>
                 <div style="margin-top: 20px; line-height: 1.6; color: #000;">
                     <p>Estimado(a) propietario(a) {nombre} {apellido},</p>
-                    <p color: #000 !important;>De antemano, reciba un cordial saludo de Berlinas del Fonce S.A., nos complace presentarle los videotutoriales donde encontrará información detallada sobre cómo aprovechar al máximo las funcionalidades que ofrece el nuevo <strong style="color: #4caf50;">Portal de Propietarios</strong>; desde como acceder al sistema hasta la consulta de extractos, descarga de certificados y el análisis estadístico de gastos e ingresos de sus vehículos.</p>
-                    <p color: #000 !important;>Puede acceder al videotutorial siguiendo el siguiente <a style="text-decoration: none; color: #4caf50;" href="https://drive.google.com/file/d/1NwbuLAv6IUCQgiXwTFZIdSg-Ujxh467M/view">enlace</a>.</p>
-                    <p color: #000 !important;>A continuación el link de acceso al portal y su respectivo usuario<br>
-                    Link de acceso: <a style="text-decoration: none; color: #4caf50;" href="gestor.berlinasdelfonce.com">gestor.berlinasdelfonce.com</a><br>
-                    Usuario: {identificacion}</p>
-                    <p color: #000 !important;><strong>Nota</strong>: Los extractos de noviembre del 2023 no serán enviados vía correo electrónico, por lo tanto, deberán ser consultarlos en el nuevo portal de propietarios.</p>
-                    <p color: #000 !important;>Para cualquier inconveniente o consulta adicional, por favor, comunicarse con el Sr. Jorge Maluendas, quien está a cargo de brindarle asistencia técnica y puede contactarlo al teléfono <a style="text-decoration: none; color: #4caf50;" href="https://api.whatsapp.com/send?phone=+573168756931">3168756931</a> o escribiéndole al correo <a style="text-decoration: none; color: #4caf50;" href="mailto:asistemas@berlinasdelfonce.com">asistemas@berlinasdelfonce.com</a>.</p>
+                    <p color: #000 !important;>Reciba un cordial saludo de Berlinas del Fonce S.A., Queremos complementar el correo que enviamos ayer, ya que hemos ampliado la variedad de videotutoriales, detallando cada una de las funcionalidades que ofrece nuestro Portal de Propietarios.</p>
+                    <p color: #000 !important;>Acceda al portal a través del siguiente enlace: <a style="text-decoration: none; color: #4caf50;" href="gestor.berlinasdelfonce.com">gestor.berlinasdelfonce.com</a> con el usuario {identificacion}</p>
+                    <p color: #000 !important;>Ingreso, Consulta y Descargas:
+                    <a style="text-decoration: none; color: #4caf50;" href="https://drive.google.com/file/d/1NwbuLAv6IUCQgiXwTFZIdSg-Ujxh467M/view?usp=sharing">Ver Video</a><br>
+
+                    Análisis Gráfico de Información:
+                    <a style="text-decoration: none; color: #4caf50;" href="https://drive.google.com/file/d/1vqNq6L1DAMTQwlRXORve8HNlenJFoSR3/view?usp=sharing">Ver Video</a><br>
+
+                    Procedimiento para Escalar PQR:
+                    <a style="text-decoration: none; color: #4caf50;" href="https://drive.google.com/file/d/1tu4NZB6ues47SDn6TgvEYIBNzSxtlX5y/view?usp=sharing">Ver Video</a><br>
+                    
+                    <p color: #000 !important;>Además, si al digitar su número de documento no encuentra su información de contacto para el envío del token, por favor, comuníquese a las siguientes líneas para suministrar sus datos actualizados:<br>
+                    318 7717171: Producidos Berlinas<br>
+                    316 5265129: Producidos Colibertador</p>
+                    <p color: #000 !important;>Para informar cualquier fallo o error en la plataforma, puede comunicarse al siguiente contacto <a style="text-decoration: none; color: #4caf50;" href="https://api.whatsapp.com/send?phone=+573168756931">3168756931</a> o escribiendo al correo <a style="text-decoration: none; color: #4caf50;" href="mailto:asistemas@berlinasdelfonce.com">asistemas@berlinasdelfonce.com</a>.</p>
                     <hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;">
                     <p style="color: #009944;"><strong>Cordialmente,</strong></p>
                     <p color: #000 !important;>Jorge Eliecer Maluendas Bautista<br>Programador de Sistemas<br><a style="text-decoration: none; color: #009944;" href="mailto:asistemas@berlinasdelfonce.com">asistemas@berlinasdelfonce.com</a><br>Teléfono: <a style="text-decoration: none; color: #009944;" href="https://api.whatsapp.com/send?phone=+573168756931">3168756931</a><br>Cra. 68D No. 15 – 15<br>Bogotá D.C. - Colombia</p>
@@ -59,7 +67,7 @@ def send_email(identificacion, nombre, apellido, correo):
         smtp.login(email_origen, "PRUEBA2023")
         smtp.sendmail(email_origen, email_destino, message.as_string())
         smtp.quit()
-        print("Correo Enviado")
+        print(f"Correo Enviado a {correo}")
     except Exception as e:
         print(f"No se pudo enviar el correo a {correo} {str(e)}")
 

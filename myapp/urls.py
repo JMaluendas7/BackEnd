@@ -44,20 +44,14 @@ urlpatterns = [
     # Lectura de menu
     path('menu/<rol>/',
          views.MenuView.as_view({'get': 'get'}), name='Lista Menu'),
-    #     path('reset_password/', PasswordResetView.as_view(), name='password_reset'),
-    #     path('reset_password/done/', PasswordResetDoneView.as_view(),
-    #          name='password_reset_done'),
+    path('reset_password/',
+         views.ResetPass.as_view({'post': 'send_reset_email'}), name='send_reset_email'),
     #     path('reset_password/<uidb64>/<token>/',
-    #          PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-    #     path('reset_password/complete/', PasswordResetCompleteView.as_view(),
-    #          name='password_reset_complete'),
-    path('reset_password/', views.PassResetView.as_view(), name='password_reset'),
-    path('reset_password/<uidb64>/<token>/',
-         views.CustomPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-    path('api/reset_password/', views.reset_password_request,
-         name='reset_password_request'),
+    #          views.CustomPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    #     path('api/reset_password/', views.reset_password_request,
+    #          name='reset_password_request'),
 
-    path('password/reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
-    path('password/reset/confirm/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    #     path('password/reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
+    #     path('password/reset/confirm/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
 
 ]
