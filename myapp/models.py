@@ -58,7 +58,17 @@ class Login(AbstractUser):
     groups = models.ManyToManyField(Group, related_name='logins', blank=True)
     user_permissions = models.ManyToManyField(
         Permission, related_name='logins', blank=True)
-    
+
+
+class Token(models.Model):
+    token = models.CharField(max_length=6, null=False)
+    fecha = models.DateField(auto_now_add=True)
+    hora = models.DateTimeField(auto_now_add=True)
+    vencido = models.BooleanField(default=False)
+    documento_num = models.IntegerField(null=False)
+    documento_num_cryp = models.CharField(null=False, max_length=60)
+
+
 class ImagenUsuario(models.Model):
     num_documento = models.ForeignKey(Login, on_delete=models.CASCADE)
     imagen = models.ImageField(upload_to='imagenes_usuarios/')

@@ -5,7 +5,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import JsonResponse
-from .models import Colaboradores, Permisos, Login, TipoDocumento, Roles, Empresas
+from .models import Colaboradores, Permisos, Login, TipoDocumento, Roles, Empresas, Token
 from django.contrib.auth import authenticate, logout
 from django.shortcuts import redirect
 from django.contrib.auth.hashers import make_password
@@ -24,11 +24,16 @@ from django.utils.translation import gettext as _
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 
+import hashlib
+import base64
+from django.utils import timezone
+
 # En views.py
 from .envioCorreos import send_email
 import secrets
 import string
 import os
+
 
 def subir_foto(request):
     imagen = request.FILES['imagen']
@@ -45,13 +50,27 @@ def subir_foto(request):
 
 
 def generate_token():
-    # Se define la combinación de caracteres permitidos (letras mayúsculas y dígitos)
     characters = string.ascii_uppercase + string.digits
-
-    # Se genera el token aleatorio de 6 caracteres
     token = ''.join(secrets.choice(characters) for i in range(6))
 
     return token
+
+
+def generate_uidb64(num_documento):
+    user = Login.objects.get(documento_num=num_documento)
+    print(user.last_name)
+    user_id_str = str(user.documento_num.num_documento)
+    timestamp = str(int(timezone.now().timestamp()))
+    num_documento = str(user.documento_num.num_documento)
+
+    data_to_hash = f"{user_id_str}{timestamp}{num_documento}"
+
+    # Crear el hash unico
+    hash_object = hashlib.sha256(data_to_hash.encode())
+    uidb64 = base64.urlsafe_b64encode(
+        hash_object.digest()).decode().replace('=', '')
+
+    return uidb64
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -60,13 +79,34 @@ class ResetPass(ViewSet):
         email = request.data["email"]
         dni = request.data["dni"]
         print(email, dni)
-        token = generate_token()
-        print(token)
-        user = Login.objects.filter(email=email, documento_num=dni)
+        user = Login.objects.get(email=email, documento_num=dni)
         if user:
-            # Llama a la función send_email desde aquí
-            send_email(email, token)
-            return Response({'message': 'Reset email sent successfully'})
+            token = generate_token()
+            first_name = user.first_name
+            last_name = user.last_name
+            uidb64 = generate_uidb64(user.documento_num)
+            send_email(email, first_name, last_name, uidb64, token)
+            Token.objects.create(
+                token=token, documento_num=dni, documento_num_cryp=uidb64)
+            return Response({'message': 'EMail enviado'})
+
+    def new_pass(self, request):
+        uidb64 = request.data["uidb64"]
+        token = request.data["token"]
+        password = request.data["password"]
+        password2 = request.data["password2"]
+        tok = Token.objects.get(
+            token=token, documento_num_cryp=uidb64, vencido=False)
+        if tok:
+            user = Login.objects.get(documento_num=tok.documento_num)
+            make_pass = make_password(password)
+            user.password = make_pass
+            user.save()
+            tok.vencido = True
+            tok.save
+            return JsonResponse({'message': 'Contraseña cambiada con éxito'})
+
+        return JsonResponse({'error': 'Hubo un problema al cambiar la contraseña'}, status=500)
 
 
 # Create your Views here.

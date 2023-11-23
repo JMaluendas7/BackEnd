@@ -5,7 +5,7 @@ from email.mime.text import MIMEText
 # Función para enviar correo electrónico
 
 
-def send_email(email, token):
+def send_email(email, first_name, last_name, uidb64, token):
 
     # Configurar el correo electrónico
     email_origen = "jmaluendasbautista@gmail.com"
@@ -30,8 +30,9 @@ def send_email(email, token):
                     <img src="{ruta_img}" alt="Logo de la empresa" style="max-width: 150px; display: block; margin: 20px auto;">
                 </div>
                 <div style="margin-top: 20px; line-height: 1.6; color: #000;">
-                    <p>Estimado(a) Nombre, {token}</p>
+                    <p>Estimado(a) {first_name} {last_name},</p>
                     <p color: #000 !important;>Esta es una prueba para el envio de link de restablecimiento de contraseña</p>
+                    <p color: #000 !important;>http://localhost:5173/{uidb64}/{token}/</p>
                     <hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;">
                     <p style="color: #009944;"><strong>Cordialmente,</strong></p>
                     <p color: #000 !important;>Jorge Eliecer Maluendas Bautista<br>Programador de Sistemas<br><a style="text-decoration: none; color: #009944;" href="mailto:asistemas@berlinasdelfonce.com">asistemas@berlinasdelfonce.com</a><br>Teléfono: <a style="text-decoration: none; color: #009944;" href="https://api.whatsapp.com/send?phone=+573168756931">3168756931</a><br>Cra. 68D No. 15 – 15<br>Bogotá D.C. - Colombia</p>
