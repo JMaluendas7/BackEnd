@@ -58,6 +58,10 @@ class Login(AbstractUser):
     groups = models.ManyToManyField(Group, related_name='logins', blank=True)
     user_permissions = models.ManyToManyField(
         Permission, related_name='logins', blank=True)
+    
+class ImagenUsuario(models.Model):
+    num_documento = models.ForeignKey(Login, on_delete=models.CASCADE)
+    imagen = models.ImageField(upload_to='imagenes_usuarios/')
 
 
 class Modulos(models.Model):

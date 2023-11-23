@@ -28,6 +28,20 @@ from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmVie
 from .envioCorreos import send_email
 import secrets
 import string
+import os
+
+def subir_foto(request):
+    imagen = request.FILES['imagen']
+    destination = os.path.join('static', imagen.name)
+
+    # Guardar la imagen en una carpeta específica
+    with open(destination, 'wb+') as destination_file:
+        for chunk in imagen.chunks():
+            destination.write(chunk)
+
+    # Aquí podrías guardar la ruta de la imagen en la base de datos si es necesario
+
+    return JsonResponse({'mensaje': 'Imagen subida correctamente'})
 
 
 def generate_token():

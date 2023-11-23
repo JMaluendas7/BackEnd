@@ -13,6 +13,8 @@ from djoser import views as djoser_views
 
 from . import api
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 router = routers.DefaultRouter()
 router.register('docsti', api.TipoDocumentoViewSet, "TipoDocumento")
@@ -46,6 +48,7 @@ urlpatterns = [
          views.MenuView.as_view({'get': 'get'}), name='Lista Menu'),
     path('reset_password/',
          views.ResetPass.as_view({'post': 'send_reset_email'}), name='send_reset_email'),
+     path('subir_foto/', views.subir_foto, name='subir_foto'),
     #     path('reset_password/<uidb64>/<token>/',
     #          views.CustomPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     #     path('api/reset_password/', views.reset_password_request,
@@ -54,4 +57,4 @@ urlpatterns = [
     #     path('password/reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
     #     path('password/reset/confirm/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
 
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

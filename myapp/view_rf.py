@@ -24,7 +24,7 @@ def reconocimiento_facial(request):
         cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
     # Carga una imagen de referencia del usuario (esto podría ser una base de datos de imágenes)
-    reference_image = cv2.imread('ruta/a/imagen_de_referencia.jpg')
+    reference_image = cv2.imread('static/jm.jpg')
     reference_gray = cv2.cvtColor(reference_image, cv2.COLOR_BGR2GRAY)
 
     # Captura una imagen (en este caso, ya se ha capturado en la parte del frontend)

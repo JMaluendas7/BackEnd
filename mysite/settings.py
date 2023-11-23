@@ -86,9 +86,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'apps5',
         'USER': 'postgres',
-        'PASSWORD': 'PRUEBA2023',
+        'PASSWORD': '8080',
         'HOST': 'localhost',
-        'PORT': 5433,
+        'PORT': 5432,
     }
 }
 
@@ -199,3 +199,16 @@ REST_FRAMEWORK = {
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
 }
+
+
+# Direccion de almacenamiento
+# STATIC_URL = '/static/'
+# STATIC_ROOT = BASE_DIR / 'static'
+# MEDIA_ROOT = '/static/face_users/'
+# MEDIA_URL = '/static/face_users/'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
