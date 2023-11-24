@@ -102,8 +102,8 @@ class ResetPass(ViewSet):
             make_pass = make_password(password)
             user.password = make_pass
             user.save()
-            tok.vencido = True
-            tok.save
+            tok.vencido=True
+            tok.save()
             return JsonResponse({'message': 'Contraseña cambiada con éxito'})
 
         return JsonResponse({'error': 'Hubo un problema al cambiar la contraseña'}, status=500)
