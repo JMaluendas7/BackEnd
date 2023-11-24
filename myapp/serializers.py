@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import TipoDocumento, Empresas, Roles, Contratos, Colaboradores, Login, Modulos, Permisos
+from .models import TipoDocumento, Empresas, Roles, Cargos, Colaboradores, Login, Modulos, Permisos
 
 
 class TipoDocumentoSlr(serializers.ModelSerializer):
@@ -20,9 +20,9 @@ class RolesSlr(serializers.ModelSerializer):
         fields = serializers.ALL_FIELDS
 
 
-class ContratosSlr(serializers.ModelSerializer):
+class CargosSlr(serializers.ModelSerializer):
     class Meta:
-        model = Contratos
+        model = Cargos
         fields = serializers.ALL_FIELDS
 
 

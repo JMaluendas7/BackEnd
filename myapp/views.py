@@ -1,28 +1,17 @@
-from django.contrib.auth.views import PasswordResetView
 from rest_framework.views import APIView
 from rest_framework.viewsets import ViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import JsonResponse
-from .models import Colaboradores, Permisos, Login, TipoDocumento, Roles, Empresas, Token
+from .models import Colaboradores, Permisos, Login, TipoDocumento, Roles, Empresas, Token, Cargos
 from django.contrib.auth import authenticate, logout
-from django.shortcuts import redirect
 from django.contrib.auth.hashers import make_password
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_http_methods
 import jwt
 
-# Importaciones para el reset de contraseña
-from django.urls import reverse_lazy
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode
-from django.utils.translation import gettext as _
-from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 
 import hashlib
 import base64
@@ -52,7 +41,6 @@ def subir_foto(request):
 def generate_token():
     characters = string.ascii_uppercase + string.digits
     token = ''.join(secrets.choice(characters) for i in range(6))
-
     return token
 
 
@@ -62,14 +50,11 @@ def generate_uidb64(num_documento):
     user_id_str = str(user.documento_num.num_documento)
     timestamp = str(int(timezone.now().timestamp()))
     num_documento = str(user.documento_num.num_documento)
-
     data_to_hash = f"{user_id_str}{timestamp}{num_documento}"
-
     # Crear el hash unico
     hash_object = hashlib.sha256(data_to_hash.encode())
     uidb64 = base64.urlsafe_b64encode(
         hash_object.digest()).decode().replace('=', '')
-
     return uidb64
 
 
@@ -102,122 +87,24 @@ class ResetPass(ViewSet):
             make_pass = make_password(password)
             user.password = make_pass
             user.save()
-            tok.vencido=True
+            tok.vencido = True
             tok.save()
             return JsonResponse({'message': 'Contraseña cambiada con éxito'})
-
         return JsonResponse({'error': 'Hubo un problema al cambiar la contraseña'}, status=500)
 
 
-# Create your Views here.
-
-
-# @login_required
-# def index(request):
-#     return (render(request, 'home.html'))
-
-
-def salir(request):
-    logout(request)
-    return redirect('/')
-
-
-class ResetPasswordView(PasswordResetView):
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        return JsonResponse({'message': 'Password reset email sent successfully.'})
-
-
-reset_password_request = ResetPasswordView.as_view()
-
-
-class PassResetView(PasswordResetView):
-    @method_decorator(csrf_exempt, name='dispatch')
-    def post(self, request, *args, **kwargs):
-        num_documento = request.POST.get('num_documento')
-        email = request.POST.get('email')
-
-        # Validacion de usuario
-        user_exists = Login.objects.filter(
-            documento_num=num_documento, email=email).exists()
-
-        if user_exists:
-            # Generar token
-            user = Login.objects.get(documento_num=num_documento, email=email)
-            uid = urlsafe_base64_encode(force_bytes(user.pk)).decode()
-            token = default_token_generator.make_token(user)
-
-            # Url de reset
-            reset_url = f"{request.scheme}://{request.get_host()}/reset-password/{uid}/{token}/"
-
-            # Envio del email
-            subject = 'Restablecimiento de contraseña'
-            message = render_to_string('registration/messageRecovery.txt', {
-                                       'reset_url': reset_url})
-            from_email = 'jmaluendase@gmail.com'
-            to_email = email
-
-            send_mail(subject, message, from_email, [to_email])
-
-            return JsonResponse({'message': 'Correo electronico de restablecimiento enviado'})
-        else:
-            return JsonResponse({'error': 'No se encontró ningún usuario con el número de documento y correo electrónico proporcionados.'}, status=400)
-
-
-# class CustomPasswordResetView(PasswordResetView):
-#     email_template_name = 'passRecoveryEmail.html'
-#     success_url = reverse_lazy('passResetOk')
-
-#     def form_valid(self, form):
-#         response = super().form_valid(form)
-
-#         # Custom logic to send email
-#         user = form.user_cache
-
-#         # Generate token and encode user ID
-#         uid = urlsafe_base64_encode(force_bytes(user.pk)).decode()
-#         token = default_token_generator.make_token(user)
-
-#         # Construct the reset URL
-#         reset_url = self.request.build_absolute_uri(
-#             reverse_lazy('password_reset_confirm', kwargs={
-#                          'uidb64': uid, 'token': token})
-#         )
-
-#         # Send the reset email
-#         subject = _('Password reset')
-#         message = render_to_string('passRecoveryEmail.txt', {
-#                                    'reset_url': reset_url})
-#         from_email = 'your_email@example.com'  # Set your own email address
-#         to_email = form.cleaned_data['email']
-
-#         send_mail(subject, message, from_email, [to_email])
-
-#         return response
-
-#     def form_invalid(self, form):
-#         response = super().form_invalid(form)
-
-#         # Custom logic for invalid form submission
-#         return JsonResponse({'error': 'Invalid form submission'}, status=400)
-
-
-class CustomPasswordResetConfirmView(PasswordResetConfirmView):
-    success_url = reverse_lazy('password_reset_complete')
-
-
 class LoginView(APIView):
+    # Vista para el inicio de sesion
     def post(self, request):
         user = authenticate(
             username=request.data["username"], password=request.data["password"])
-        if user:  # Genera un JWT
-            # token, created = Token.objects.get_or_create(user=user)
+        if user:
             payload = {"username": user.username,
                        "nombre": user.first_name,
                        "apellido": user.last_name,
                        "rol_id": user.documento_num.rol_id.id_rol}
-            # token_value = token.key if created else Token.objects.get(user=user).key
-            token = jwt.encode(payload, 'your-secret-key', algorithm='HS256')
+            token = jwt.encode(payload, 'your-secret-key',
+                               algorithm='HS256')  # Genera un JWT
 
             return Response({"token": token,
                              "num_documento": user.documento_num.num_documento,
@@ -246,7 +133,7 @@ class ColaboradoresView(ViewSet):
                     'telefono': usuario.telefono,
                     'direccion': usuario.direccion,
                     'email': usuario.email,
-                    'contrato_id': usuario.contrato_id,
+                    'cargo_id': usuario.cargo_id,
                     'rol_id': rol_id,
                     'ciudad': usuario.ciudad,
                     'empresa_id': usuario.empresa_id.nombre_empresa,
@@ -276,7 +163,7 @@ class ColaboradoresView(ViewSet):
             direccion = request.POST.get('direccion')
             ciudad = request.POST.get('ciudad')
             telefono = request.POST.get('telefono')
-            contrato_id = request.POST.get('contrato_id')
+            cargo_id = request.POST.get('cargo_id')
             empresa_id = request.POST.get('empresa_id')
             empresa_id = Empresas.objects.get(id_empresa=empresa_id)
             rol_id = request.POST.get('rol_id')
@@ -284,7 +171,7 @@ class ColaboradoresView(ViewSet):
                 id_tipodocumento=tipo_documento)
             id_rol = Roles.objects.get(id_rol=rol_id)
             Colaboradores.objects.create(num_documento=num_documento, nombres=nombres, apellidos=apellidos, telefono=telefono, direccion=direccion, email=email,
-                                         contrato_id=contrato_id, ciudad=ciudad, tipo_documento_id=tipo_documento_id, rol_id=id_rol, empresa_id=empresa_id)
+                                         cargo_id=cargo_id, ciudad=ciudad, tipo_documento_id=tipo_documento_id, rol_id=id_rol, empresa_id=empresa_id)
             response_data = {'mensaje': 'Colaborador creado con éxito'}
             return JsonResponse(response_data)
 
@@ -302,8 +189,8 @@ class ColaboradoresView(ViewSet):
             colaborador.telefono = data_to_update.get(
                 'telefono', colaborador.telefono)
             colaborador.email = data_to_update.get('email', colaborador.email)
-            # colaborador.contrato_id = data_to_update.get(
-            #     'contrato_id', colaborador.contrato_id)
+            # colaborador.cargo_id = data_to_update.get(
+            #     'cargo_id', colaborador.cargo_id)
             colaborador.direccion = data_to_update.get(
                 'direccion', colaborador.direccion)
             colaborador.ciudad = data_to_update.get(
