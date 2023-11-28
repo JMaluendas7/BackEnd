@@ -112,9 +112,10 @@ class LoginView(APIView):
                              "nombre": user.first_name,
                              "apellido": user.last_name,
                              "rol_id": user.documento_num.rol_id.id_rol,
+                             "message": user.first_name + " has iniciado sesion"
                              })
         else:
-            return Response({"error": "Credenciales inválidas"}, status=400)
+            return Response({"message": "Credenciales inválidas"}, status=400)
 
 
 class ColaboradoresView(ViewSet):
