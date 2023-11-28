@@ -58,7 +58,7 @@ def reconocimiento_facial(request):
         umbral = 0.6
 
         if distance < umbral:
-            recognized_user = "JMaluendas (face_recognition)"
+            recognized_user = "JMaluendas"
             return JsonResponse({'message': f'Usuario reconocido: {recognized_user}'})
 
         return JsonResponse({'message': 'Usuario no reconocido'}, status=403)
