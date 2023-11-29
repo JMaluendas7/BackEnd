@@ -3,7 +3,7 @@ from django.urls import path, include
 from django.urls import path
 from . import api
 from . import views
-from . import view_rf
+from . import view_rf, view_rf_for
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.decorators.csrf import csrf_exempt
@@ -45,5 +45,7 @@ urlpatterns = [
          views.subir_foto, name='subir_foto'),
     path('subir_ft/',
          csrf_exempt(view_rf.reconocimiento_facial), name='subir_ft'),
+    path('subir_fto/',
+         csrf_exempt(view_rf_for.reconocimiento_facial), name='subir_fto'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
