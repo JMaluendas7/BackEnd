@@ -21,6 +21,8 @@ router.register('permisos', api.PermisosViewSet, "Permisos")
 urlpatterns = [
     path('api/', include(router.urls)),
     path('login/', views.LoginView.as_view(), name='Inicio de sesion'),
+    path('loginFace/', views.LoginFaceView.as_view(),
+         name='Login con Face Id'),
     # Crud Colaboradores
     path('colaboradores/',
          views.ColaboradoresView.as_view({'get': 'get'}), name='Lista de Colaboradores'),

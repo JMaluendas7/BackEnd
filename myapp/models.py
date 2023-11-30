@@ -48,7 +48,7 @@ class Colaboradores(models.Model):
     rol_id = models.ForeignKey(Roles, on_delete=models.CASCADE)
     empresa_id = models.ForeignKey(
         Empresas, on_delete=models.CASCADE)
-    cargo_id = models.IntegerField(null=False)
+    cargo_id = models.ForeignKey(Cargos, on_delete=models.CASCADE)
     ciudad = models.CharField(max_length=100, null=False)
     fecha_registro = models.DateTimeField(auto_now_add=True)
 

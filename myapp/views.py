@@ -94,7 +94,7 @@ class ResetPass(ViewSet):
 
 
 class LoginView(APIView):
-    # Vista para el inicio de sesion
+    # Vista para el inicio de sesion con Face Id
     def post(self, request):
         user = authenticate(
             username=request.data["username"], password=request.data["password"])
@@ -118,6 +118,32 @@ class LoginView(APIView):
             return Response({"message": "Credenciales inválidas"}, status=400)
 
 
+class LoginFaceView(APIView):
+    def postFace(self, request):
+        documento_num = request.data["documento_num"]
+        user = Login.objects.get(documento_num=documento_num)
+        userLogin = authenticate(
+            username=user.username, password=user.password)
+        if userLogin:
+            payload = {"username": user.username,
+                       "nombre": user.first_name,
+                       "apellido": user.last_name,
+                       "rol_id": user.documento_num.rol_id.id_rol}
+            token = jwt.encode(payload, 'your-secret-key',
+                               algorithm='HS256')  # Genera un JWT
+
+            return Response({"token": token,
+                             "num_documento": user.documento_num.num_documento,
+                             "username": user.username,
+                             "nombre": user.first_name,
+                             "apellido": user.last_name,
+                             "rol_id": user.documento_num.rol_id.id_rol,
+                             "message": user.first_name + " has iniciado sesion de manera facial"
+                             })
+        else:
+            return Response({"message": "Credenciales inválidas"}, status=400)
+
+
 class ColaboradoresView(ViewSet):
     @action(detail=False, methods=['GET'])
     def get(self, request, num_Documento=None):
@@ -134,7 +160,7 @@ class ColaboradoresView(ViewSet):
                     'telefono': usuario.telefono,
                     'direccion': usuario.direccion,
                     'email': usuario.email,
-                    'cargo_id': usuario.cargo_id,
+                    'cargo_id': usuario.cargo_id.detalle_cargo,
                     'rol_id': rol_id,
                     'ciudad': usuario.ciudad,
                     'empresa_id': usuario.empresa_id.nombre_empresa,
