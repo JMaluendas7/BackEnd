@@ -230,8 +230,11 @@ class ColaboradoresView(ViewSet):
                 'ciudad', colaborador.ciudad)
             # colaborador.rol_id = data_to_update.get(
             #     'rol_id', colaborador.rol_id)
-            # colaborador.empresa_id = data_to_update.get(
-            #     'empresa_id', colaborador.empresa_id)
+            emp = data_to_update.get('empresa_id', colaborador.empresa_id)
+            print(emp)
+            empresa_id = Empresas.objects.get(id_empresa=emp)
+            print(empresa_id)
+            colaborador.empresa_id = empresa_id
 
             colaborador.save()
 

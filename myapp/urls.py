@@ -9,14 +9,14 @@ from django.conf.urls.static import static
 from django.views.decorators.csrf import csrf_exempt
 
 router = routers.DefaultRouter()
-router.register('docsti', api.TipoDocumentoViewSet, "TipoDocumento")
-router.register('bussines', api.EmpresasViewSet, "Empresas")
 router.register('rol', api.RolesViewSet, "Roles")
-router.register('cargos', api.CargosViewSet, "Cargos")
 router.register('users', api.ColaboradoresViewSet, "Colaboradores")
 router.register('login', api.LoginViewSet, "Login")
+router.register('cargos', api.CargosViewSet, "Cargos")
+router.register('docsti', api.TipoDocumentoViewSet, "TipoDocumento")
 router.register('Modulos', api.ModulosViewSet, "Modulos")
 router.register('permisos', api.PermisosViewSet, "Permisos")
+router.register('bussines', api.EmpresasViewSet, "Empresas")
 
 urlpatterns = [
     path('api/', include(router.urls)),
