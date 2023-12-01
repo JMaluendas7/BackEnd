@@ -47,7 +47,7 @@ def reconocimiento_facial(request):
                 if correlation > 1:
                     recognized_user = recognized_user = os.path.splitext(image_name)[
                         0]
-                    return JsonResponse({'message': f'Usuario reconocido: {recognized_user}', 'user_id': recognized_user})
+                    return JsonResponse({'user_id': recognized_user, 'message': f'Usuario reconocido: {recognized_user}'})
 
             # Método con face_recognition
             image_data.seek(0)  # Reiniciar el cursor de lectura del archivo
@@ -73,6 +73,6 @@ def reconocimiento_facial(request):
 
             if distance < umbral:
                 recognized_user = os.path.splitext(image_name)[0]
-                return JsonResponse({'message': f'Usuario reconocido: {recognized_user}', 'image_name': image_name})
+                return JsonResponse({'message': f'Usuario reconocido: {recognized_user}', 'image_name': image_name, 'user_id': recognized_user, 'status': 200})
 
         return JsonResponse({'message': 'Usuario no reconocido'}, status=403)

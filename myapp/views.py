@@ -119,26 +119,32 @@ class LoginView(APIView):
 
 
 class LoginFaceView(APIView):
-    def postFace(self, request):
-        documento_num = request.data["documento_num"]
+    def post(self, request):
+        documento_num = int(request.data["documento_num"])
+        print(type(documento_num))
         user = Login.objects.get(documento_num=documento_num)
+        usernamee = user.username
+        print(usernamee)
+        userpass = user.password
+        print(type(userpass))
         userLogin = authenticate(
-            username=user.username, password=user.password)
+            username=usernamee, password=userpass)
+        print(userLogin)
         if userLogin:
-            payload = {"username": user.username,
-                       "nombre": user.first_name,
-                       "apellido": user.last_name,
-                       "rol_id": user.documento_num.rol_id.id_rol}
+            payload = {"username": userLogin.username,
+                       "nombre": userLogin.first_name,
+                       "apellido": userLogin.last_name,
+                       "rol_id": userLogin.documento_num.rol_id.id_rol}
             token = jwt.encode(payload, 'your-secret-key',
                                algorithm='HS256')  # Genera un JWT
 
             return Response({"token": token,
-                             "num_documento": user.documento_num.num_documento,
-                             "username": user.username,
-                             "nombre": user.first_name,
-                             "apellido": user.last_name,
-                             "rol_id": user.documento_num.rol_id.id_rol,
-                             "message": user.first_name + " has iniciado sesion de manera facial"
+                             "num_documento": userLogin.documento_num.num_documento,
+                             "username": userLogin.username,
+                             "nombre": userLogin.first_name,
+                             "apellido": userLogin.last_name,
+                             "rol_id": userLogin.documento_num.rol_id.id_rol,
+                             "message": userLogin.first_name + " has iniciado sesion de manera facial"
                              })
         else:
             return Response({"message": "Credenciales inválidas"}, status=400)
