@@ -27,9 +27,10 @@ urlpatterns = [
     # Crud Colaboradores
     path('colaboradores/',
          views.ColaboradoresView.as_view({'get': 'get'}), name='Lista de Colaboradores'),
-    path('addColaboradores/',
+    path('addColaboradores/<int:id_permiso>/<int:rol_id>/',
          views.ColaboradoresView.as_view({'post': 'post'}), name='Registro de Colaboradores'),
-     path('colaboradoresput/<int:id>/', views.ColaboradoresView.as_view({'put': 'put'}), name="Editar Colaborador"),
+    path('colaboradoresput/<int:id>/',
+         views.ColaboradoresView.as_view({'put': 'put'}), name="Editar Colaborador"),
     path('colaboradoresdel/<id>/', views.ColaboradoresView.as_view(
         {'delete': 'delete'}), name="Eliminar Colaborador"),
     # Crud Usuarios

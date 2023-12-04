@@ -183,7 +183,6 @@ class ColaboradoresView(ViewSet):
                 return JsonResponse({'error': 'Usuario no encontrado'}, status=404)
 
         return JsonResponse(data, safe=False)
-    
 
     @action(detail=True, methods=['POST'])
     def post(self, request, id_permiso, rol_id, format=None):
@@ -204,6 +203,7 @@ class ColaboradoresView(ViewSet):
             tipo_documento_id = TipoDocumento.objects.get(
                 id_tipodocumento=tipo_documento)
             id_rol = Roles.objects.get(id_rol=rol_id)
+            cargo_id = Cargos.objects.get(id_cargo=cargo_id)
             Colaboradores.objects.create(num_documento=num_documento, nombres=nombres, apellidos=apellidos, telefono=telefono, direccion=direccion, email=email,
                                          cargo_id=cargo_id, ciudad=ciudad, tipo_documento_id=tipo_documento_id, rol_id=id_rol, empresa_id=empresa_id)
             response_data = {'mensaje': 'Colaborador creado con éxito'}
