@@ -39,17 +39,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'myapp',
+    'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
     'psycopg2',
-    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -86,9 +86,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'apps5',
         'USER': 'postgres',
-        'PASSWORD': 'PRUEBA2023',
+        'PASSWORD': '8080',
         'HOST': 'localhost',
-        'PORT': 5433,
+        'PORT': 5432,
     }
 }
 
@@ -153,11 +153,15 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
 ]
 
-# Intercambio de Cookies
-CORS_ALLOW_CREDENTIALS = True
-CORS_DEBUG = True
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
 
-# Encabezados que permito
 CORS_ALLOW_HEADERS = [
     "accept",
     "accept-encoding",
@@ -170,14 +174,10 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
 ]
 
-CORS_ALLOW_METHODS = [
-    "DELETE",
-    "GET",
-    "OPTIONS",
-    "PATCH",
-    "POST",
-    "PUT",
-]
+# Intercambio de Cookies
+CORS_ALLOW_CREDENTIALS = True
+CORS_DEBUG = True
+
 
 CORS_PREFLIGHT_MAX_AGE = 86400  # 24 horas
 

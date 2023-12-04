@@ -183,6 +183,7 @@ class ColaboradoresView(ViewSet):
                 return JsonResponse({'error': 'Usuario no encontrado'}, status=404)
 
         return JsonResponse(data, safe=False)
+    
 
     @action(detail=True, methods=['POST'])
     def post(self, request, id_permiso, rol_id, format=None):
@@ -209,7 +210,7 @@ class ColaboradoresView(ViewSet):
             return JsonResponse(response_data)
 
     @action(detail=True, methods=['PUT'])
-    def put(self, request, id):
+    def put(self, request, id, format=None):
         try:
             colaborador = Colaboradores.objects.get(num_documento=id)
 

@@ -4,6 +4,7 @@ from django.urls import path
 from . import api
 from . import views
 from . import view_rf, view_rf_for
+from . import crearExcel
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.decorators.csrf import csrf_exempt
@@ -28,8 +29,7 @@ urlpatterns = [
          views.ColaboradoresView.as_view({'get': 'get'}), name='Lista de Colaboradores'),
     path('addColaboradores/',
          views.ColaboradoresView.as_view({'post': 'post'}), name='Registro de Colaboradores'),
-    path('colaboradoresput/<id>/',
-         views.ColaboradoresView.as_view({'put': 'put'}), name="Editar Colaborador"),
+     path('colaboradoresput/<int:id>/', views.ColaboradoresView.as_view({'put': 'put'}), name="Editar Colaborador"),
     path('colaboradoresdel/<id>/', views.ColaboradoresView.as_view(
         {'delete': 'delete'}), name="Eliminar Colaborador"),
     # Crud Usuarios
@@ -49,5 +49,6 @@ urlpatterns = [
          csrf_exempt(view_rf.reconocimiento_facial), name='subir_ft'),
     path('subir_fto/',
          csrf_exempt(view_rf_for.reconocimiento_facial), name='subir_fto'),
+    path('generar_excel/', crearExcel.generar_excel, name='generar_excel'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
