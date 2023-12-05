@@ -1,7 +1,7 @@
-import os
+import io
 import pandas as pd
 import json
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
@@ -15,16 +15,19 @@ def generar_excel(request):
             colaboradores = json.loads(request.body)
             # Aquí puedes procesar los datos de colaboradores como desees
 
-            # Ejemplo de creación de un archivo Excel de prueba con Pandas
-            ruta_descargas = os.path.join(os.path.expanduser("~"), "Downloads")
-            ruta_excel = os.path.join(ruta_descargas, "5apps", "excel", "prueba.xlsx")
-            ventas = {"descripción": ["Producto1", "Producto2", "Producto3"], "venta": ["3456", "5646", "7656"],}
+            # Crear el archivo Excel en memoria
+            output = io.BytesIO()
+            with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                dataframe = pd.DataFrame(colaboradores)
+                dataframe.to_excel(writer, index=False, sheet_name='Sheet1')
 
-            # Crear el archivo Excel en la ruta especificada
-            dataframe = pd.DataFrame(colaboradores)
-            dataframe.to_excel(ruta_excel)
+            output.seek(0)
 
-            return JsonResponse({'message': 'Archivo Excel generado correctamente'})
+            # Enviar el archivo Excel como una respuesta al frontend
+            response = HttpResponse(output.getvalue(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Content-Disposition'] = 'attachment; filename=colaboradores.xlsx'
+
+            return response
 
         return JsonResponse({'error': 'No se recibieron datos de colaboradores en el cuerpo de la solicitud'})
 
