@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en" charset="UTF-8">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documento PDF</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+            font-size: 10px;
+        }
+
+        .content {
+            width: 612px;
+            /* Ancho de página carta en puntos (8.5 x 72) */
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        p {
+            text-align: justify;
+            line-height: 1.6;
+        }
+
+        hr {
+            margin: 0 .5rem;
+        }
+
+        .title_doc {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border: 1px solid black;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .title_con {
+            display: flex;
+            text-align: center;
+            margin: 0;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .num_viaje {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .fecha {
+            position: relative;
+            right: -10rem;
+            font-size: .6rem;
+            color: rgb(63, 61, 61);
+        }
+
+        .container_cont {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .cont_a {
+            flex-basis: 75%;
+        }
+
+        .cont_b {
+            flex-basis: 25%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .items {
+            display: flex;
+            /* height: 1rem; */
+            line-height: 1rem;
+        }
+
+        .items_center {
+            text-align: center;
+        }
+
+        .item_name,
+        .item_nit {
+            width: 5rem;
+            height: 1rem;
+            line-height: 1rem;
+            border: 1px solid black;
+            margin-top: .1rem;
+            padding: 0 .6rem;
+            font-weight: bold;
+        }
+
+        .no_line {
+            border: none;
+        }
+
+        .line {
+            border: 1px solid black;
+        }
+
+        .item_nit {
+            width: 1.5rem;
+        }
+
+        .item_3rem {
+            width: 3rem;
+        }
+
+        .item_full {
+            width: -webkit-fill-available;
+        }
+
+        .item_desc {
+            margin-left: .5rem;
+            margin-top: .1rem;
+        }
+
+        .center {
+            margin: 0 auto;
+            width: fit-content;
+        }
+
+        .containers {
+            margin-top: 1rem;
+        }
+
+        .item_100 {
+            width: auto;
+            height: 2rem;
+        }
+
+        .text_6 {
+            font-size: .6rem;
+        }
+
+        .text_5 {
+            font-size: .5rem;
+        }
+
+        .text_4 {
+            font-size: .45rem;
+        }
+
+        .item_55 {
+            width: 55%;
+        }
+
+        .height_2rem {
+            height: 2rem;
+        }
+
+        .height_100 {
+            height: 100%;
+        }
+
+        .height_5rem {
+            height: 5rem;
+        }
+
+        .lineh_2rem {
+            line-height: 2rem;
+        }
+
+        .item_table {
+            padding: 0;
+        }
+
+        .terms {
+            line-height: 10px;
+            font-style: italic;
+            color: #272727;
+        }
+
+        .img_firmapj {
+            background-image: url("./static/img/FIRMA PJC.jpg");
+            background-size: contain;
+            background-repeat: no-repeat;
+            height: 3rem;
+            width: 5rem;
+            margin: 0 auto;
+        }
+
+        .banner__logos {
+            display: flex;
+            align-items: center;
+            width: 96%;
+            padding: 0 1.9%;
+            margin: 0 auto;
+            border: 1px solid black;
+        }
+
+        .logo_mint {
+            background-image: url("./static/img/logo_mint.jpg");
+            background-size: contain;
+            background-repeat: no-repeat;
+            height: 3rem;
+            width: 15rem;
+            margin: 0 auto;
+        }
+
+        .logo_iso {
+            background-image: url("./static/img/logo_iso.jpg");
+            background-size: contain;
+            background-repeat: no-repeat;
+            height: 4.5rem;
+            width: 6rem;
+            margin: 0 auto;
+        }
+
+        .logo_ber {
+            background-image: url("./static/img/logo_ber.jpg");
+            background-size: contain;
+            background-repeat: no-repeat;
+            height: 3rem;
+            width: 10rem;
+            margin: 0 auto;
+        }
+
+        .logo_st {
+            background-image: url("./static/img/logo_st.jpg");
+            background-size: contain;
+            background-repeat: no-repeat;
+            height: 3rem;
+            width: 7rem;
+            margin: 0 auto;
+        }
+
+        .hr_logos {
+            height: 3rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="content">
+        <section class="banner__logos">
+            <div class="logo_mint"></div>
+            <div class="logo_iso"></div>
+            <hr class="hr_logos">
+            <div class="logo_ber"></div>
+            <div class="logo_st"></div>
+        </section>
+        <section class="title_doc">
+            <div class="title_con">FORMATO ÚNICO DE EXTRACTO DEL CONTRATO DEL SERVICIO PÚBLICO DE<br>
+                TRANSPORTE TERRESTRE AUTOMOTOR ESPECIAL</div>
+            <div class="num_viaje">N° 324234234-2023-3101-3096 <span class="fecha">05/12/2023</span></div>
+        </section>
+        <section class="container_cont">
+            <div class="cont_a">
+                <nav class="items">
+                    <div class="item_name">Razon social</div>
+                    <div class="item_desc">TRANSPORTES Y TURISMO BERLINAS DEL FONCE S.A.</div>
+                </nav>
+                <nav class="items">
+                    <div class="item_name">Contrato N°</div>
+                    <div class="item_desc">3101</div>
+                </nav>
+                <nav class="items">
+                    <div class="item_name">Contratante</div>
+                    <div class="item_desc">AGENCIA DE VIAJES OPERADORA BERLINASTUR S.A.</div>
+                </nav>
+                <nav class="items">
+                    <div class="item_name">Objeto contrato</div>
+                    <div class="item_desc">TRANSPORTE DE PARTICULARES (GRUPO - PERSONA NATURAL)</div>
+                </nav>
+            </div>
+            <div class="cont_b">
+                <nav class="items">
+                    <div class="item_nit">Nit</div>
+                    <div class="item_desc">860015624-1</div>
+                </nav>
+                <nav class="items">
+                    <div class="item_nit">Nit</div>
+                    <div class="item_desc">860015624-1</div>
+                </nav>
+            </div>
+
+        </section>
+        <section class="containers">
+            <div class="item_name center">RECORRIDO</div>
+            <nav class="items">
+                <div class="item_name item_3rem">ORIGEN</div>
+                <div class="item_desc">BARRANQUILLA Y SU AREA METROPOLITANA</div>
+            </nav>
+            <nav class="items">
+                <div class="item_name item_3rem">DESTINO</div>
+                <div class="item_desc">SANTA MARTA-RODADERO-ZIRUMA-CENTRO-MAMATOCO, TRONCAL DEL CARIBE</div>
+            </nav>
+            <div class="item_name item_100">CONVENIO DE COLABORACION:</div>
+        </section>
+        <section class="containers">
+            <div class="item_name center">VIGENCIA DEL CONTRATO</div>
+            <nav class="items">
+                <div class="item_name item_full">FECHA INICIAL</div>
+                <div class="item_name item_full">05</div>
+                <div class="item_name item_full">12</div>
+                <div class="item_name item_full">2023</div>
+            </nav>
+            <nav class="items">
+                <div class="item_name item_full">FECHA DE VENCIMIENTO</div>
+                <div class="item_name item_full">06</div>
+                <div class="item_name item_full">12</div>
+                <div class="item_name item_full">2023</div>
+            </nav>
+        </section>
+        <section class="containers">
+            <div class="item_name center">CARACTERISTICAS DEL VEHICULO</div>
+            <nav class="items items_center line">
+                <div class="no_line item_full no_line">PLACA</div>
+                <div class="item_name item_full no_line">MODELO</div>
+                <div class="item_name item_full no_line">MARCA</div>
+                <div class="item_name item_full no_line">CLASE</div>
+            </nav>
+            <nav class="items items_center line">
+                <div class="item_name item_full no_line">WFQ435</div>
+                <div class="item_name item_full no_line">2016</div>
+                <div class="item_name item_full no_line">MERCEDES BENZ</div>
+                <div class="item_name item_full no_line">MICROBUS</div>
+            </nav>
+            <nav class="items items_center no_line">
+                <div class="item_name item_full">
+                    <div>NUMERO INTERNO: <span>933</span></div>
+                </div>
+                <div class="item_name item_full">
+                    <div>NUMERO TARJETA OPERACION: <span>333033</span></div>
+                </div>
+            </nav>
+
+            <nav class="items items_center no_line">
+                <div class="item_name item_full item_table item_55"></div>
+                <div class="item_name item_full item_table text_5 item_table">NOMBRES Y APELLIDOS</div>
+                <div class="item_name item_full item_table">NUMERO DE CEDULA</div>
+                <div class="item_name item_full item_table text_5">LICENCIA DE CONDUCCION</div>
+                <div class="item_name item_full item_table text_6">VIGENCIA</div>
+            </nav>
+            <nav class="items items_center no_line height_2rem">
+                <div class="item_name item_full item_table text_5 height_100 item_55">DATOS DEL CONDUCTOR</div>
+                <div class="item_name item_full item_table text_4 height_100 lineh_2rem">HECTOR DARIO GUERRA JIMENEZ
+                </div>
+                <div class="item_name item_full item_table height_100 lineh_2rem">88288351</div>
+                <div class="item_name item_full item_table height_100 lineh_2rem">88288351</div>
+                <div class="item_name item_full item_table text_6 height_100 lineh_2rem">Jul 11 2025 12:00AM</div>
+            </nav>
+            <nav class="items items_center no_line height_2rem">
+                <div class="item_name item_full item_table height_100 text_5 item_55">DATOS DEL CONDUCTOR</div>
+                <div class="item_name item_full item_table height_100 text_4 lineh_2rem">HECTOR DARIO GUERRA JIMENEZ
+                </div>
+                <div class="item_name item_full item_table height_100 lineh_2rem">88288351</div>
+                <div class="item_name item_full item_table height_100 lineh_2rem">88288351</div>
+                <div class="item_name item_full item_table text_6 height_100 lineh_2rem">Jul 11 2025 12:00AM</div>
+            </nav>
+            <nav class="items items_center no_line">
+                <div class="item_name item_full item_table item_55"></div>
+                <div class="item_name item_full item_table text_5 item_table">NOMBRES Y APELLIDOS</div>
+                <div class="item_name item_full item_table">NUMERO DE CEDULA</div>
+                <div class="item_name item_full item_table">TELEFONO</div>
+                <div class="item_name item_full item_table text_6">DIRECCION</div>
+            </nav>
+            <nav class="items items_center no_line height_2rem">
+                <div class="item_name item_full item_table text_4 height_100 item_55">RESPONSABLE DEL CONTRATANTE</div>
+                <div class="item_name item_full item_table text_4 height_100 lineh_2rem">HECTOR DARIO GUERRA JIMENEZ
+                </div>
+                <div class="item_name item_full item_table height_100 lineh_2rem">72194995</div>
+                <div class="item_name item_full item_table text_6 height_100 lineh_2rem">317 638 2363</div>
+                <div class="item_name item_full item_table text_6 height_100 lineh_2rem">Calle 93 No. 46-136</div>
+            </nav>
+        </section>
+        <section class="container_text">
+            <p class="terms"><strong>Protocolo de Alistamiento Preventivo realizado según resolución 315 del Ministerio
+                    de Transporte
+                    (06 de
+                    febrero de 2013).</strong><br>
+                El contratante y Berlinastur S.A., declaran que cuentan con la autorización del responsable designado
+                por parte del contratante y del conductor(es),
+                respectivamente, así como las personas de las cuales en el futuro suministren información personal, para
+                transmitir su información a la otra parte para
+                efectos de gestionar y adelantar todas las actividades concernientes a la prestación del servicio de
+                transporte terrestre contratado, el pago
+                correspondiente y establecer un canal de comunicación permanente durante la ejecución de este contrato.
+                Las partes tratarán información bajo los
+                lineamientos previstos en la Ley 1581 de 2012, el Decreto 1377 de 2013 y su política de información
+                personal. La Política de Tratamiento de Datos
+                Personales puede ser consultada en www.berlinasdelfonce.com y su canal de atención es
+                proteccióndedatos@berlinasdelfonce.com.</p>
+        </section>
+        <section class="containers">
+            <nav class="items items_center no_line height_5rem">
+                <div class="item_name item_full item_table height_5rem">
+                    <p class="title_con"><strong>Carrera 68D #15-15 Tel.: 7435050</strong>
+                        informacion@berlinasdelfonce.com<br>
+                        <strong>Bogotá D.C.</strong>
+                    </p>
+                </div>
+                <div class="item_name item_full item_table height_5rem">
+                    <p class="title_con">
+                    <div class="img_firmapj"></div>
+                    Pedro José Cobos<br>
+                    <hr>
+                    <strong>FIRMA GERENTE</strong>
+                    </p>
+            </nav>
+        </section>
+    </div>
+</body>
+
+</html>
