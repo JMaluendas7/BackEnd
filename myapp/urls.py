@@ -2,7 +2,7 @@ from rest_framework import routers
 from django.urls import path, include
 from django.urls import path
 from . import api, views, view_rf, view_rf_for
-from . import crearExcel
+from . import crearExcel, rptoFuec
 from . import crearPdf_Wp
 from django.conf import settings
 from django.conf.urls.static import static
@@ -50,5 +50,8 @@ urlpatterns = [
     path('subir_fto/',
          csrf_exempt(view_rf_for.reconocimiento_facial), name='subir_fto'),
     path('generar_excel/', crearExcel.generar_excel, name='generar_excel'),
+    path('callViajes/', rptoFuec.rptoFuec, name='Llamar Viajes'),
+    path('callRptoViaje/', rptoFuec.rptoFuecPDF,
+         name='Llamar datos para el reporte'),
     #     path('export/', crearPdf_Wp.export_pdf, name="export-pdf")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
