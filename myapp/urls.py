@@ -51,7 +51,7 @@ urlpatterns = [
          csrf_exempt(view_rf_for.reconocimiento_facial), name='subir_fto'),
     path('generar_excel/', crearExcel.generar_excel, name='generar_excel'),
     path('callViajes/', rptoFuec.rptoFuec, name='Llamar Viajes'),
-    path('callRptoViaje/', rptoFuec2.rptoFuecPDF2,
+    path('callRptoViaje/', rptoFuec.rptoFuecPDF2,
          name='Llamar datos para el reporte'),
     #     path('export/', crearPdf_Wp.export_pdf, name="export-pdf")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
