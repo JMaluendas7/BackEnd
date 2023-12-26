@@ -1,19 +1,28 @@
-FROM python:3.11-slim
+FROM python:3.11.3
 
-ENV PYTHONUNBUFFERED=1
+# Instalar las dependencias necesarias, incluyendo el ODBC Driver 17 para SQL Server
+RUN apt-get update && apt-get install -y \
+    unixodbc \
+    unixodbc-dev \
+    libgl1-mesa-glx \
+    mesa-utils \
+    && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
+# Descargar e instalar el ODBC Driver 17 para SQL Server
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
+    curl https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
+    apt-get update && \
+    ACCEPT_EULA=Y apt-get install -y msodbcsql17
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends build-essential cmake libopenblas-dev liblapack-dev libx11-dev libgtk-3-dev && \
-    pip install --upgrade pip
+WORKDIR /code
 
-COPY ./requirements.txt ./
+COPY requirements.txt .
 
-RUN pip install --upgrade pip setuptools
 RUN pip install -r requirements.txt
 
-COPY . /app
+COPY . .
+
+ENV DJANGO_SETTINGS_MODULE=mysite.settings
 
 EXPOSE 8000
 

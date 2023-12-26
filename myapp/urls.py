@@ -23,7 +23,7 @@ urlpatterns = [
     path('login/', views.LoginView.as_view(), name='Inicio de sesion'),
     path('loginface/', views.LoginFaceView.as_view(),
          name='Login con Face Id'),
-    # Crud Colaboradores
+    #     Crud Colaboradores
     path('colaboradores/',
          views.ColaboradoresView.as_view({'get': 'get'}), name='Lista de Colaboradores'),
     path('addColaboradores/<int:id_permiso>/<int:rol_id>/',

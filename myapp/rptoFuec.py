@@ -5,20 +5,29 @@ from datetime import datetime
 from decimal import Decimal
 import pyodbc
 import json
+# import django.db import Database
 
 
 @csrf_exempt
 @require_http_methods(["POST"])
 def rptoFuec(request):
-    server = '172.16.0.25'
-    database = 'Dynamix'
-    username = 'Developer'
-    password = '123456'
+    # server = 'd1.berlinasdelfonce.com'
+    # database = 'Dynamix'
+    # username = 'Developer'
+    # password = '123456'
 
     try:
         if request.method == "POST":
+
+            server = 'd1.berlinasdelfonce.com'
+            database = 'Dynamix'
+            username = 'Developer'
+            password = '123456'
+
             conn = pyodbc.connect(
-                'DRIVER={SQL Server};SERVER='+server + ';DATABASE='+database+';UID='+username+';PWD='+password)
+                'DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+password)
+
+            # conne =
 
             data = json.loads(request.body)
             fecha = data.get('fecha')
@@ -28,7 +37,7 @@ def rptoFuec(request):
                 try:
                     fecha = datetime.strptime(fecha, '%Y-%m-%d %H:%M:%S')
                 except ValueError:
-                    fecha = datetime.now()
+                    print(fecha)
             else:
                 fecha = datetime.now()
 
@@ -36,6 +45,7 @@ def rptoFuec(request):
             bus = data.get('searchV')
 
             cursor = conn.cursor()
+            print(bus)
 
             cursor.execute("{CALL RP_FS_BUS (?, ?)}", (bus, fecha))
 
@@ -86,9 +96,12 @@ def rptoFuecPDF2(request):
             Motivo = 'TRANSPORTE DE PARTICULARES (GRUPO - PERSONA NATURAL)'
             Cliente = 860015624
             op = 1
-
+            server = 'd1.berlinasdelfonce.com'
+            database = 'Dynamix'
+            username = 'Developer'
+            password = '123456'
             conn = pyodbc.connect(
-                'DRIVER={SQL Server};SERVER=172.16.0.25;DATABASE=Dynamix;UID=Developer;PWD=123456')
+                'DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+password)
 
             cursor = conn.cursor()
             cursor.execute(
@@ -100,8 +113,10 @@ def rptoFuecPDF2(request):
             converted_row = convert_to_dict(row, columns)
 
             # Conversion a diccionario
-            results = dict(zip(columns, converted_row))
-            print(results)
+            resultss = dict(zip(columns, converted_row))
+            results = {key: value.rstrip() if isinstance(
+                value, str) else value for key, value in resultss.items()}
+
             conn.commit()
             conn.close()
 

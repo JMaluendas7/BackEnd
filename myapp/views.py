@@ -314,7 +314,7 @@ class MenuView(ViewSet):
                     'id_permiso': modulo.id_permiso,
                     'nom_modulo': mod.nom_modulo,
                     'url_img': mod.url_img,
-                    'isOpen': False,
+                    'isOpen': True,
 
                     'subItems': data_sub_menu,
 
