@@ -98,7 +98,15 @@ class LoginView(APIView):
     def post(self, request):
         user = authenticate(
             username=request.data["username"], password=request.data["password"])
+        username = request.data["username"]
+        print(username)
+        print(request.data["password"])
         if user:
+            hora_actual = timezone.now()
+            user_login = Login.objects.get(username=username)
+            user_login.last_login = hora_actual
+            user_login.save()
+
             payload = {"username": user.username,
                        "nombre": user.first_name,
                        "apellido": user.last_name,

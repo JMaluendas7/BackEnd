@@ -98,3 +98,13 @@ class Permisos(models.Model):
     permiso_reportes = models.BooleanField(default=True)
     estado_permiso = models.BooleanField(default=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+
+class RptoFuec(models.Model):
+    id_fuec = models.AutoField(primary_key=True)
+    nom_fuec = models.CharField(max_length=99, null=False)
+    modificaciones = models.CharField(max_length=500, null=True)
+    num_bus = models.IntegerField(null=False)
+    num_viaje = models.IntegerField(null=False)
+    user_creo = models.CharField(max_length=50, null=False)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)

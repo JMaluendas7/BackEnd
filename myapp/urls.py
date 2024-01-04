@@ -53,5 +53,8 @@ urlpatterns = [
     path('callViajes/', rptoFuec.rptoFuec, name='Llamar Viajes'),
     path('callRptoViaje/', rptoFuec.rptoFuecPDF2,
          name='Llamar datos para el reporte'),
+    path('saveRpto/', csrf_exempt(rptoFuec.saveRpto), name='Guardar el reporte'),
+    #     path('saveRptoPru/', csrf_exempt(rptoFuec.saveRptoPru),
+    #          name='Guardar el reporte Prueba'),
     #     path('export/', crearPdf_Wp.export_pdf, name="export-pdf")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
