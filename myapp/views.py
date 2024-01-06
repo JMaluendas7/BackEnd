@@ -23,6 +23,8 @@ import secrets
 import string
 import os
 
+from operator import itemgetter  # Para ordenar los items y subitems
+
 
 def subir_foto(request):
     imagen = request.FILES['imagen']
@@ -316,6 +318,10 @@ class MenuView(ViewSet):
                         'reportes': submodulo.permiso_reportes,
                     })
 
+                # Ordena los subitems alfabéticamente por el nombre del módulo
+                data_sub_menu = sorted(
+                    data_sub_menu, key=itemgetter('nom_modulo'))
+
                 mod = modulo.modulo_id
                 data_menu.append({
                     'id_modulo': mod.id_modulo,
@@ -325,8 +331,10 @@ class MenuView(ViewSet):
                     'isOpen': True,
 
                     'subItems': data_sub_menu,
-
                 })
+
+            # Ordena los items alfabéticamente por el nombre del módulo raíz
+            data_menu = sorted(data_menu, key=itemgetter('nom_modulo'))
 
             return Response(data_menu)
 
