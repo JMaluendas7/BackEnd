@@ -2,7 +2,7 @@ from rest_framework import routers
 from django.urls import path, include
 from django.urls import path
 from . import api, views, view_rf, view_rf_for
-from . import crearExcel, rptoFuec, reportes, rptoFuec2
+from . import crearExcel, rptoFuec, reportes, reporteAlcoholimetria, RptosOperaciones, rptoFuec2
 from . import crearPdf_Wp
 from django.conf import settings
 from django.conf.urls.static import static
@@ -54,14 +54,22 @@ urlpatterns = [
     path('callRptoViaje/', rptoFuec.rptoFuecPDF2,
          name='Llamar datos para el reporte'),
     path('saveRpto/', csrf_exempt(rptoFuec.saveRpto), name='Guardar el reporte'),
-    #     Handle reportes WsDx
+    #    Handle reportes WsDx
     path('rptoCuotaAdmin/', csrf_exempt(reportes.rptoCuotaAdmin),
          name='Reporte cuota de administracion'),
-    path('generarRptoAdminCiudades/', csrf_exempt(reportes.generarRptoAdminCiudades),
+    #     path('generarRptoAdminCiudades/', csrf_exempt(reportes.generarRptoAdminCiudades),
+    #          name='Generacion de excel en plantilla'),
+    #     path('generarRptoAdminPropietarios/', csrf_exempt(reportes.generarRptoAdminPropietarios),
+    #          name='Generacion de excel en plantilla'),
+    path('generarRptoAdmin/', csrf_exempt(reportes.generarRptoAdmin),
          name='Generacion de excel en plantilla'),
-    path('generarRptoAdminPropietarios/', csrf_exempt(reportes.generarRptoAdminPropietarios),
-         name='Generacion de excel en plantilla'),
-    path('generarRptoAdminCiudadesColi/', csrf_exempt(reportes.generarRptoAdminCiudadesColi),
-         name='Generacion de excel en plantilla'),
+    path('rptoAlcoholimetria/', csrf_exempt(reporteAlcoholimetria.rptoAlcoholimetria),
+         name='Reporte de alcoholimetria'),
+    path('generarRptoAlcoholimetria/', csrf_exempt(reporteAlcoholimetria.generarRptoAlcoholimetria),
+         name='Generacion de reporte en excel de alcoholimetria'),
+    path('rptoOperaciones/', csrf_exempt(RptosOperaciones.rptoOperaciones),
+         name='Reportes para operaciones'),
+    path('generarRptoOViajes/', csrf_exempt(RptosOperaciones.generarRptoOpeViajes),
+         name='Generacion de reporte en excel de Viajes'),
     #     path('export/', crearPdf_Wp.export_pdf, name="export-pdf")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
