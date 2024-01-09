@@ -8,8 +8,8 @@ from email.mime.text import MIMEText
 def send_email(email, first_name, last_name):
 
     # Configurar el correo electrónico
-    email_origen = "jmaluendasbautista@gmail.com"
-    # email_origen = "asistemas@berlinasdelfonce.com"
+    # email_origen = "jmaluendasbautista@gmail.com"
+    email_origen = "asistemas@berlinasdelfonce.com"
     email_destino = email
 
     # Direcciones de correo para la copia
@@ -20,7 +20,7 @@ def send_email(email, first_name, last_name):
     message = MIMEMultipart()
     message["From"] = email_origen
     message["To"] = email_destino
-    message["Cc"] = "jmaluendase@gmail.com"
+    message["Cc"] = "jmaluendasbautista@gmail.com"
     message["Subject"] = "Acceso a Nuevo Aplicativo(5Apps) Para la Creación de Informes"
 
     body = f"""
@@ -68,17 +68,19 @@ def send_email(email, first_name, last_name):
     message.attach(MIMEText(body, "html"))
 
     try:
-        # smtp = smtplib.SMTP_SSL("mail.berlinasdelfonce.com")
-        # smtp.login(email_origen, "PRUEBA2023")
-        # smtp.sendmail(email_origen, email_destino, message.as_string())
-        # smtp.quit()
-        smtp = smtplib.SMTP_SSL("smtp.gmail.com")
-        smtp.login(email_origen, "tlgtoadfnyqdzoij")
-        smtp.sendmail(email_origen, email_destino, message.as_string())
+        smtp = smtplib.SMTP_SSL("mail.berlinasdelfonce.com")
+        smtp.login(email_origen, "PRUEBA2023")
+        smtp.sendmail(
+            email_origen, [email_destino, "jmaluendasbautista@gmail.com"], message.as_string())
         smtp.quit()
+        # smtp = smtplib.SMTP_SSL("smtp.gmail.com")
+        # smtp.login(email_origen, "tlgtoadfnyqdzoij")
+        # smtp.sendmail(
+        #     email_origen, [email_destino, "jmaluendasbautista@gmail.com"], message.as_string())
+        # smtp.quit()
         print(f"Correo Enviado a {email_destino}")
     except Exception as e:
         print("No se pudo enviar el correo a ${email} {str(e)}")
 
 
-send_email("peti@berlinasdelfonce.com", "Pedro", "Becerra")
+send_email("jmaluendase@gmail.com", "Pedro", "Becerra")
