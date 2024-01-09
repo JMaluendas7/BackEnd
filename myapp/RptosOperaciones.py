@@ -27,9 +27,9 @@ def rptoOperaciones(request):
             conn = pyodbc.connect(
                 'DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+password)
 
+            EmpiD = request.POST.get('empresa', None)
             fechaInicio = request.POST.get('startDate', None)
             fechaFinal = request.POST.get('endDate', None)
-            EmpiD = request.POST.get('empresa', None)
             Opcion = request.POST.get('Opcion', None)
             SubOpcion = request.POST.get('SubOpcion', None)
             Cadena01 = "VACIO"
@@ -59,7 +59,7 @@ def rptoOperaciones(request):
                     row_dict[column_name] = value
                 rows_list.append(row_dict)
 
-            # print(rows_list)
+            print(rows_list)
 
             cursor.close()
             conn.close()
@@ -89,6 +89,8 @@ def generarRptoOpeViajes(request):
             year = startDate.year
             month = startDate.month
 
+            print(Opcion, SubOpcion)
+
             # Obtener la ruta absoluta de la plantilla Excel en el mismo directorio que el script
             script_dir = os.path.dirname(__file__)
 
@@ -98,9 +100,11 @@ def generarRptoOpeViajes(request):
                         script_dir, '../docs/Plantillas/Plantilla_Rpto_Operaciones_Viajes.xlsx')
             elif Opcion == 1:
                 if SubOpcion == 0:
-                    pass
+                    plantilla_path = os.path.join(
+                        script_dir, '../docs/Plantillas/Plantilla_Rpto_Operaciones_InformeConsolidadoPM0.xlsx')
                 elif SubOpcion == 1:
-                    pass
+                    plantilla_path = os.path.join(
+                        script_dir, '../docs/Plantillas/Plantilla_Rpto_Operaciones_InformeConsolidadoPM1.xlsx')
                 elif SubOpcion == 2:
                     if empresa == 277 or empresa == 278:
                         plantilla_path = os.path.join(
@@ -108,11 +112,37 @@ def generarRptoOpeViajes(request):
                     elif empresa == 9001 or empresa == 310 or empresa == 320:
                         plantilla_path = os.path.join(
                             script_dir, '../docs/Plantillas/Plantilla_Rpto_Operaciones_InformePorFechaSP.xlsx')
+            elif Opcion == 20:
+                if SubOpcion == 0:
+                    plantilla_path = os.path.join(
+                        script_dir, '../docs/Plantillas/Plantilla_Rpto_Operaciones_InfoEstadisticasConsolidadoPLC.xlsx')
+                elif SubOpcion == 1:
+                    plantilla_path = os.path.join(
+                        script_dir, '../docs/Plantillas/Plantilla_Rpto_Operaciones_InfoEstadisticaConsolidadoPLC.xlsx')
+            elif Opcion == 26:
+                if SubOpcion == 0:
+                    plantilla_path = os.path.join(
+                        script_dir, '../docs/Plantillas/Plantilla_Rpto_Operaciones_InfoEstadisticasConsolidadoPLEA.xlsx')
+                elif SubOpcion == 1:
+                    plantilla_path = os.path.join(
+                        script_dir, '../docs/Plantillas/Plantilla_Rpto_Operaciones_InfoEstadisticasDetalladoPLEA.xlsx')
+            elif Opcion == 29:
+                if SubOpcion == 0:
+                    plantilla_path = os.path.join(
+                        script_dir, '../docs/Plantillas/Plantilla_Rpto_Operaciones_InformeConsolidadoCombustible.xlsx')
+                elif SubOpcion == 1:
+                    plantilla_path = os.path.join(
+                        script_dir, '../docs/Plantillas/Plantilla_Rpto_Operaciones_InformeDetalladoCombustible.xlsx')
 
             # Verificar si existe el archivo
             if os.path.exists(plantilla_path):
-                # Cargar la plantilla Excel
-                workbook = load_workbook(plantilla_path)
+                try:
+                    # Carga de la plantilla Excel
+                    workbook = load_workbook(plantilla_path)
+                except Exception as e:
+                    print(f"Error al cargar la plantilla: {e}")
+                    return JsonResponse({'error': f"Error al cargar la plantilla: {e}"})
+
                 sheet = workbook.active
 
                 # Obtener la fecha y hora actual en UTC
@@ -128,8 +158,13 @@ def generarRptoOpeViajes(request):
                 current_time = current_datetime_bogota.strftime('%H:%M:%S')
 
                 # Ubicación para el nombre de la empresa
-                start_column_colEmp = 'D'
-                start_row_colEmp = 2
+                if Opcion != 29:
+                    start_column_colEmp = 'D'
+                    start_row_colEmp = 2
+                else:
+                    start_column_colEmp = 'C'
+                    start_row_colEmp = 2
+
                 # Ubicación para month y year del reporte
                 start_column_colMes = 'I'
                 start_row_colMes = 6
@@ -162,8 +197,8 @@ def generarRptoOpeViajes(request):
                 cell_colEmp.alignment = Alignment(
                     horizontal='center')
 
-                if Opcion == 0 or Opcion == 1:
-                    if SubOpcion == 0 or SubOpcion == 2:
+                if Opcion == 0 or Opcion == 1 or Opcion == 20 or Opcion == 26 or Opcion == 29:
+                    if SubOpcion == 0 or SubOpcion == 1 or SubOpcion == 2:
                         # Ubicación específica para la columna 1 en la celda B9
                         start_column_col1 = 'B'
                         start_row_col1 = 8
@@ -208,6 +243,8 @@ def generarRptoOpeViajes(request):
                         cell_d6 = sheet['D6']
                         cell_d6.value = current_time
 
+                        # Variable para almacenar la suma de la columna 4 (flotante)
+                        sum_col4 = 0.0
                         # Variable para almacenar la suma de la columna 5 (flotante)
                         sum_col5 = 0.0
                         # Variable para almacenar la suma de la columna 6 (flotante)
@@ -246,6 +283,9 @@ def generarRptoOpeViajes(request):
                                     cell_col4.value = col_value
                                     cell_col4.alignment = Alignment(
                                         horizontal='center')
+                                    if Opcion == 1:
+                                        if SubOpcion == 1:
+                                            sum_col4 += float(col_value)
 
                                 # Escribir en la columna 5
                                 elif col_index == 5:
@@ -254,7 +294,7 @@ def generarRptoOpeViajes(request):
                                     cell_col5.alignment = Alignment(
                                         horizontal='center')
                                     if Opcion == 1:
-                                        if SubOpcion == 2:
+                                        if SubOpcion == 0 or SubOpcion == 1 or SubOpcion == 2:
                                             sum_col5 += float(col_value)
 
                                 # Escribir en la columna 6
@@ -264,8 +304,12 @@ def generarRptoOpeViajes(request):
                                     cell_col6.alignment = Alignment(
                                         horizontal='center')
                                     if Opcion == 1:
-                                        if SubOpcion == 2:
+                                        if SubOpcion == 0 or SubOpcion == 1 or SubOpcion == 2:
                                             sum_col6 += float(col_value)
+                                    elif Opcion == 29:
+                                        if SubOpcion == 0:
+                                            sum_col6 += float(col_value)
+                                            cell_col6.number_format = "#,###"
 
                                 # Escribir en la columna 7
                                 elif col_index == 7:
@@ -273,11 +317,12 @@ def generarRptoOpeViajes(request):
                                     cell_col7.value = col_value
                                     cell_col7.alignment = Alignment(
                                         horizontal='center')
-                                    sum_col7 += float(col_value)
+                                    if Opcion != 20 and Opcion != 26 and Opcion != 29:
+                                        sum_col7 += float(col_value)
                                     if Opcion == 1:
                                         if SubOpcion == 2:
                                             if empresa == 9001 or empresa == 310 or empresa == 320:
-                                                cell_col7.number_format = "###,###.## COP"
+                                                cell_col7.number_format = "#,###"
 
                                 # Escribir en la columna 8
                                 elif col_index == 8:
@@ -289,7 +334,11 @@ def generarRptoOpeViajes(request):
                                         if SubOpcion == 2:
                                             if empresa == 277 or empresa == 278:
                                                 sum_col8 += float(col_value)
-                                                cell_col8.number_format = "###,###.## COP"
+                                                cell_col8.number_format = "#,###"
+                                    elif Opcion == 29:
+                                        if SubOpcion == 1:
+                                            sum_col8 += float(col_value)
+                                            cell_col8.number_format = "#,###"
 
                                 # Escribir en la columna 9
                                 elif col_index == 9:
@@ -299,7 +348,7 @@ def generarRptoOpeViajes(request):
                                         horizontal='center')
 
                             if Opcion == 1:
-                                if SubOpcion == 2:
+                                if SubOpcion == 0:
                                     # Escribir las sumas al final de las filas de resultados y aplicar el estilo en negrita
                                     cell_sum_col5 = sheet[
                                         f'{start_column_col5}{start_row_col5 + len(datos) + 1}']
@@ -322,16 +371,121 @@ def generarRptoOpeViajes(request):
                                     cell_sum_col7.alignment = Alignment(
                                         horizontal='center')
                                     if empresa == 9001 or empresa == 310 or empresa == 320:
-                                        cell_sum_col7.number_format = "###,###.## COP"
-
-                                    if empresa == 277 or empresa == 278:
+                                        cell_sum_col7.number_format = "#,###"
+                                    elif empresa == 277 or empresa == 278:
                                         cell_sum_col8 = sheet[
                                             f'{start_column_col8}{start_row_col8 + len(datos) + 1}']
                                         cell_sum_col8.value = sum_col8
                                         cell_sum_col8.font = Font(bold=True)
                                         cell_sum_col8.alignment = Alignment(
                                             horizontal='center')
-                                        cell_sum_col8.number_format = "###,###.## COP"
+                                        cell_sum_col8.number_format = "#,###"
+
+                                    # Escribir "Totales" en negrita
+                                    cell_totals = sheet[
+                                        f'{start_column_col1}{start_row_col1 + len(datos) + 1}']
+                                    cell_totals.value = "Totales"
+                                    cell_totals.font = Font(bold=True)
+                                    cell_totals.alignment = Alignment(
+                                        horizontal='center')
+                                elif SubOpcion == 1:
+                                    # Escribir las sumas al final de las filas de resultados y aplicar el estilo en negrita
+                                    cell_sum_col5 = sheet[
+                                        f'{start_column_col5}{start_row_col5 + len(datos) + 1}']
+                                    cell_sum_col5.value = sum_col5
+                                    cell_sum_col5.font = Font(bold=True)
+                                    cell_sum_col5.alignment = Alignment(
+                                        horizontal='center')
+
+                                    cell_sum_col6 = sheet[
+                                        f'{start_column_col6}{start_row_col6 + len(datos) + 1}']
+                                    cell_sum_col6.value = sum_col6
+                                    cell_sum_col6.font = Font(bold=True)
+                                    cell_sum_col6.alignment = Alignment(
+                                        horizontal='center')
+
+                                    cell_sum_col7 = sheet[
+                                        f'{start_column_col7}{start_row_col7 + len(datos) + 1}']
+                                    cell_sum_col7.value = sum_col7
+                                    cell_sum_col7.font = Font(bold=True)
+                                    cell_sum_col7.alignment = Alignment(
+                                        horizontal='center')
+                                    cell_sum_col7.number_format = "#,###"
+
+                                    # Escribir "Totales" en negrita
+                                    cell_totals = sheet[
+                                        f'{start_column_col1}{start_row_col1 + len(datos) + 1}']
+                                    cell_totals.value = "Totales"
+                                    cell_totals.font = Font(bold=True)
+                                    cell_totals.alignment = Alignment(
+                                        horizontal='center')
+                                elif SubOpcion == 2:
+                                    # Escribir las sumas al final de las filas de resultados y aplicar el estilo en negrita
+                                    cell_sum_col5 = sheet[
+                                        f'{start_column_col5}{start_row_col5 + len(datos) + 1}']
+                                    cell_sum_col5.value = sum_col5
+                                    cell_sum_col5.font = Font(bold=True)
+                                    cell_sum_col5.alignment = Alignment(
+                                        horizontal='center')
+
+                                    cell_sum_col6 = sheet[
+                                        f'{start_column_col6}{start_row_col6 + len(datos) + 1}']
+                                    cell_sum_col6.value = sum_col6
+                                    cell_sum_col6.font = Font(bold=True)
+                                    cell_sum_col6.alignment = Alignment(
+                                        horizontal='center')
+
+                                    cell_sum_col7 = sheet[
+                                        f'{start_column_col7}{start_row_col7 + len(datos) + 1}']
+                                    cell_sum_col7.value = sum_col7
+                                    cell_sum_col7.font = Font(bold=True)
+                                    cell_sum_col7.alignment = Alignment(
+                                        horizontal='center')
+                                    if empresa == 9001 or empresa == 310 or empresa == 320:
+                                        cell_sum_col7.number_format = "#,###"
+                                    elif empresa == 277 or empresa == 278:
+                                        cell_sum_col8 = sheet[
+                                            f'{start_column_col8}{start_row_col8 + len(datos) + 1}']
+                                        cell_sum_col8.value = sum_col8
+                                        cell_sum_col8.font = Font(bold=True)
+                                        cell_sum_col8.alignment = Alignment(
+                                            horizontal='center')
+                                        cell_sum_col8.number_format = "#,###"
+
+                                    # Escribir "Totales" en negrita
+                                    cell_totals = sheet[
+                                        f'{start_column_col1}{start_row_col1 + len(datos) + 1}']
+                                    cell_totals.value = "Totales"
+                                    cell_totals.font = Font(bold=True)
+                                    cell_totals.alignment = Alignment(
+                                        horizontal='center')
+                            elif Opcion == 29:
+                                if SubOpcion == 0:
+                                    # Escribir las sumas al final de las filas de resultados y aplicar el estilo en negrita
+                                    cell_sum_col6 = sheet[
+                                        f'{start_column_col6}{start_row_col6 + len(datos) + 1}']
+                                    cell_sum_col6.value = sum_col6
+                                    cell_sum_col6.font = Font(bold=True)
+                                    cell_sum_col6.alignment = Alignment(
+                                        horizontal='center')
+                                    cell_sum_col6.number_format = "#,###"
+
+                                    # Escribir "Totales" en negrita
+                                    cell_totals = sheet[
+                                        f'{start_column_col1}{start_row_col1 + len(datos) + 1}']
+                                    cell_totals.value = "Totales"
+                                    cell_totals.font = Font(bold=True)
+                                    cell_totals.alignment = Alignment(
+                                        horizontal='center')
+                                elif SubOpcion == 1:
+                                    # Escribir las sumas al final de las filas de resultados y aplicar el estilo en negrita
+                                    cell_sum_col8 = sheet[
+                                        f'{start_column_col8}{start_row_col8 + len(datos) + 1}']
+                                    cell_sum_col8.value = sum_col8
+                                    cell_sum_col8.font = Font(bold=True)
+                                    cell_sum_col8.alignment = Alignment(
+                                        horizontal='center')
+                                    cell_sum_col8.number_format = "#,###"
 
                                     # Escribir "Totales" en negrita
                                     cell_totals = sheet[
