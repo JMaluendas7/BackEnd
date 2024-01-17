@@ -15,7 +15,7 @@ import io
 
 @csrf_exempt
 @require_http_methods(["POST"])
-def rptoOperaciones(request):
+def rptoContabilidad(request):
     try:
         if request.method == "POST":
 
@@ -34,7 +34,15 @@ def rptoOperaciones(request):
             SubOpcion = request.POST.get('SubOpcion', None)
             Cadena01 = "VACIO"
             Cadena02 = "VACIO"
+            if int(Opcion) == 22:
+                if int(SubOpcion) == 0:
+                    Cadena01 = "65"
+                    Cadena02 = "VACIO"
+                elif int(SubOpcion) == 1:
+                    Cadena01 = "VACIO"
+                    Cadena02 = "1"
             valor01 = 100
+            print(Cadena01, Cadena02)
 
             cursor = conn.cursor()
 
@@ -59,7 +67,7 @@ def rptoOperaciones(request):
                     row_dict[column_name] = value
                 rows_list.append(row_dict)
 
-            # print(rows_list)
+            print(rows_list)
 
             cursor.close()
             conn.close()

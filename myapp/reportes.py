@@ -39,10 +39,6 @@ def rptoCuotaAdmin(request):
             mes = fecha_inicio_obj.month
             anio = fecha_inicio_obj.year
 
-            print(f'Mes: {mes}, Año: {anio}')
-
-            print(FechaInicio, FechaFinal, tipo_informe, concepto)
-
             cursor = conn.cursor()
 
             cursor.execute("{CALL RP_CuotaAdmon (?, ?, ?, ?, ?, ?, ?, ?)}",
@@ -66,7 +62,7 @@ def rptoCuotaAdmin(request):
                     row_dict[column_name] = value
                 rows_list.append(row_dict)
 
-            # print(rows_list)
+            print(rows_list)
 
             cursor.close()
             conn.close()
@@ -127,6 +123,13 @@ def generarRptoAdmin(request):
                 current_date = current_datetime_bogota.strftime('%Y-%m-%d')
                 current_time = current_datetime_bogota.strftime('%H:%M:%S')
 
+                # Variable para almacenar la suma de la columna 4 (flotante)
+                sum_col3 = 0.0
+                sum_col4 = 0.0
+                sum_col5 = 0.0
+                sum_col6 = 0.0
+                sum_col7 = 0.0
+
                 if tipoInforme == 1:
                     plantilla_path = os.path.join(
                         script_dir, '../docs/Plantillas/Plantilla_Rpto_CuotaAdmin_CiudadesColi.xlsx')
@@ -172,12 +175,6 @@ def generarRptoAdmin(request):
                     # Escribir la hora actual en la celda D6
                     cell_d6 = sheet['D6']
                     cell_d6.value = current_time
-
-                    # Escribir los datos de datos en ubicaciones específicas
-                    # Variable para almacenar la suma de la columna 4 (flotante)
-                    sum_col4 = 0.0
-                    # Variable para almacenar la suma de la columna 5 (flotante)
-                    sum_col5 = 0.0
 
                     for index, colaborador in enumerate(datos, start=1):
                         for col_index, (col_name, col_value) in enumerate(colaborador.items(), start=1):
@@ -262,47 +259,47 @@ def generarRptoAdmin(request):
                     cell_d6 = sheet['D6']
                     cell_d6.value = current_time
 
-                    # Escribir los datos de datos en ubicaciones específicas
-                    # Variable para almacenar la suma de la columna 4 (flotante)
-                    sum_col6 = 0.0
-                    # Variable para almacenar la suma de la columna 5 (flotante)
-                    sum_col7 = 0.0
-
                     for index, colaborador in enumerate(datos, start=1):
                         for col_index, (col_name, col_value) in enumerate(colaborador.items(), start=1):
                             # Escribir en la columna 4
                             if col_index == 4:
-                                cell_col3 = sheet[f'{start_column_col4}{start_row_col5 + index}']
-                                cell_col3.value = col_value
+                                cell_col4 = sheet[f'{start_column_col4}{start_row_col5 + index}']
+                                cell_col4.alignment = Alignment(
+                                    horizontal="center")
+                                cell_col4.value = col_value
 
                             elif col_index == 5:
-                                cell_col4 = sheet[f'{start_column_col5}{start_row_col5 + index}']
-                                cell_col4.value = col_value
+                                cell_col5 = sheet[f'{start_column_col5}{start_row_col5 + index}']
+                                cell_col5.value = col_value
 
                             # Escribir en la columna 6
                             elif col_index == 6:
-                                cell_col5 = sheet[f'{start_column_col6}{start_row_col6 + index}']
-                                cell_col5.value = col_value
+                                cell_col6 = sheet[f'{start_column_col6}{start_row_col6 + index}']
+                                cell_col6.number_format = "#,###"
+                                cell_col6.value = col_value
                                 # Convertir a flotante y sumar los valores de la columna 6
                                 sum_col6 += float(col_value)
 
                             # Escribir en la columna 7
                             elif col_index == 7:
-                                cell_col5 = sheet[f'{start_column_col7}{start_row_col7 + index}']
-                                cell_col5.value = col_value
+                                cell_col7 = sheet[f'{start_column_col7}{start_row_col7 + index}']
+                                cell_col7.value = col_value
+                                cell_col7.number_format = "#,###"
                                 # Convertir a flotante y sumar los valores de la columna 5
                                 sum_col7 += float(col_value)
 
                     # Escribir las sumas al final de las filas de resultados y aplicar el estilo en negrita
-                    cell_sum_col7 = sheet[f'{start_column_col6}{start_row_col6 + len(datos) + 1}']
-                    cell_sum_col7.value = sum_col6
+                    cell_sum_col6 = sheet[f'{start_column_col6}{start_row_col6 + len(datos) + 1}']
+                    cell_sum_col6.value = sum_col6
+                    cell_sum_col6.font = Font(bold=True)
+                    cell_sum_col6.number_format = "#,###"
+                    cell_sum_col6.alignment = Alignment(horizontal='right')
+
+                    cell_sum_col7 = sheet[f'{start_column_col7}{start_row_col7 + len(datos) + 1}']
+                    cell_sum_col7.value = sum_col7
+                    cell_sum_col7.number_format = "#,###"
                     cell_sum_col7.font = Font(bold=True)
                     cell_sum_col7.alignment = Alignment(horizontal='right')
-
-                    cell_sum_col6 = sheet[f'{start_column_col7}{start_row_col7 + len(datos) + 1}']
-                    cell_sum_col6.value = sum_col7
-                    cell_sum_col6.font = Font(bold=True)
-                    cell_sum_col6.alignment = Alignment(horizontal='right')
 
                     # Escribir "-totales-" en negrita en la columna 3 al final de los datos
                     cell_totals = sheet[f'{start_column_col4}{start_row_col4 + len(datos) + 1}']
@@ -337,12 +334,6 @@ def generarRptoAdmin(request):
                     # Escribir la hora actual en la celda D6
                     cell_d6 = sheet['D6']
                     cell_d6.value = current_time
-
-                    # Escribir los datos de datos en ubicaciones específicas
-                    # Variable para almacenar la suma de la columna 6 (flotante)
-                    sum_col5 = 0.0
-                    # Variable para almacenar la suma de la columna 6 (flotante)
-                    sum_col6 = 0.0
 
                     for index, colaborador in enumerate(datos, start=1):
                         for col_index, (col_name, col_value) in enumerate(colaborador.items(), start=1):
@@ -413,50 +404,57 @@ def generarRptoAdmin(request):
                     cell_d6 = sheet['D6']
                     cell_d6.value = current_time
 
-                    # Escribir los datos de datos en ubicaciones específicas
-                    # Variable para almacenar la suma de la columna 3 (flotante)
-                    sum_col3 = 0.0
-                    # Variable para almacenar la suma de la columna 4 (flotante)
-                    sum_col4 = 0.0
-
                     for index, colaborador in enumerate(datos, start=1):
                         for col_index, (col_name, col_value) in enumerate(colaborador.items(), start=1):
 
                             # Escribir en la columna 1
                             if col_index == 1:
                                 cell_col1 = sheet[f'{start_column_col1}{start_row_col1 + index}']
+                                cell_col1.alignment = Alignment(
+                                    horizontal="center")
                                 cell_col1.value = col_value
 
                             # Escribir en la columna 2
                             elif col_index == 2:
                                 cell_col2 = sheet[f'{start_column_col2}{start_row_col2 + index}']
+                                cell_col2.alignment = Alignment(
+                                    horizontal="center")
                                 cell_col2.value = col_value
+                                cell_col2.number_format = "#,###"
 
                             # Escribir en la columna 3
                             elif col_index == 3:
                                 cell_col3 = sheet[f'{start_column_col3}{start_row_col3 + index}']
+                                cell_col3.alignment = Alignment(
+                                    horizontal="center")
                                 cell_col3.value = col_value
+                                cell_col3.number_format = "#,###"
                                 # Convertir a flotante y sumar los valores de la columna 6
                                 sum_col3 += float(col_value)
 
                             # Escribir en la columna 4
                             elif col_index == 4:
                                 cell_col4 = sheet[f'{start_column_col4}{start_row_col4 + index}']
+                                cell_col4.alignment = Alignment(
+                                    horizontal="center")
+                                cell_col4.number_format = "#,###"
                                 cell_col4.value = col_value
                                 # Convertir a flotante y sumar los valores de la columna 6
                                 sum_col4 += float(col_value)
 
                     # Escribir las sumas al final de las filas de resultados y aplicar el estilo en negrita
                     cell_sum_col3 = sheet[f'{start_column_col3}{start_row_col3 + len(datos) + 1}']
+                    cell_sum_col3.number_format = "#,###"
                     cell_sum_col3.value = sum_col3
                     cell_sum_col3.font = Font(bold=True)
-                    cell_sum_col3.alignment = Alignment(horizontal='right')
+                    cell_sum_col3.alignment = Alignment(horizontal='center')
 
                     # Escribir las sumas al final de las filas de resultados y aplicar el estilo en negrita
                     cell_sum_col4 = sheet[f'{start_column_col4}{start_row_col4 + len(datos) + 1}']
+                    cell_sum_col4.number_format = "#,###"
                     cell_sum_col4.value = sum_col4
                     cell_sum_col4.font = Font(bold=True)
-                    cell_sum_col4.alignment = Alignment(horizontal='right')
+                    cell_sum_col4.alignment = Alignment(horizontal='center')
 
                     # Escribir "-totales-" en negrita en la columna 1 al final de los datos
                     cell_totals = sheet[f'{start_column_col1}{start_row_col1 + len(datos) + 1}']

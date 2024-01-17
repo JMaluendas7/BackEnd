@@ -208,3 +208,6 @@ REST_FRAMEWORK = {
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
 }
+
+# Tamaño de manejo de datos en memoria
+DATA_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024  # 35 megabytes

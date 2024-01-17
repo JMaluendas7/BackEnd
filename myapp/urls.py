@@ -2,7 +2,7 @@ from rest_framework import routers
 from django.urls import path, include
 from django.urls import path
 from . import api, views, view_rf, view_rf_for
-from . import crearExcel, rptoFuec, reportes, reporteAlcoholimetria, RptosOperaciones, rptoFuec2
+from . import crearExcel, rptoFuec, reportes, reporteAlcoholimetria, RptosOperaciones, RptosPlaneacion, RptosContabilidad, Pvu, Tiquetes, Dominicales, RptosConductores
 from . import crearPdf_Wp
 from django.conf import settings
 from django.conf.urls.static import static
@@ -68,8 +68,24 @@ urlpatterns = [
     path('generarRptoAlcoholimetria/', csrf_exempt(reporteAlcoholimetria.generarRptoAlcoholimetria),
          name='Generacion de reporte en excel de alcoholimetria'),
     path('rptoOperaciones/', csrf_exempt(RptosOperaciones.rptoOperaciones),
-         name='Reportes para operaciones'),
+         name='Reportes-Datos Operaciones'),
     path('generarRptoOViajes/', csrf_exempt(RptosOperaciones.generarRptoOpeViajes),
          name='Generacion de reporte en excel de Viajes'),
+    path('rptoPlaneacion/', csrf_exempt(RptosPlaneacion.rptoPlaneacion),
+         name='Reportes-Datos Planeacion'),
+    path('generarRptoPL/', csrf_exempt(RptosPlaneacion.generarRptoPL),
+         name='Generacion de reporte en excel de Planeacion'),
+    path('rptoContabilidad/', csrf_exempt(RptosContabilidad.rptoContabilidad),
+         name='Reportes-Datos Contabilidad'),
+    path('generarRptoPL/', csrf_exempt(RptosPlaneacion.generarRptoPL),
+         name='Generacion de reporte en excel de Planeacion'),
+    path('Pvu/', csrf_exempt(Pvu.Pvu), name='Pvu'),
+    path('PvuInactivate/', csrf_exempt(Pvu.PvuInactivate), name='Pvu'),
+    path('RptosDominicales/', csrf_exempt(Dominicales.RptosDominicales), name='Pvu'),
+    path('TiquetesCRM/', csrf_exempt(Tiquetes.TiquetesCRM),
+         name='Rpto Tiquetes CRM'),
+    path('RptoConductores/', csrf_exempt(RptosConductores.RptoConductores), name=''),
+    path('generarRptoConductores/', csrf_exempt(RptosConductores.generarRptoConductores),
+         name='Generacion de reporte en excel de Conductores'),
     #     path('export/', crearPdf_Wp.export_pdf, name="export-pdf")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

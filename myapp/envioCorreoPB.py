@@ -13,14 +13,14 @@ def send_email(email, first_name, last_name):
     email_destino = email
 
     # Direcciones de correo para la copia
-    cc_emails = ["jmaluendasbautista@gmail.com", "jemaluendas@gmail.com"]
+    cc_emails = ["peti@berlinasdelfonce.com", "pjcobos@berlinasdelfonce.co"]
 
     ruta_img = "https://saas-cms-admin-sandbox.s3.us-west-2.amazonaws.com/sites/647e59513d04a300028afa72/assets/647e59b33d04a300028afa77/Logo_berlinas_blanco_fondo-transparente_DIGITAL.png"
 
     message = MIMEMultipart()
     message["From"] = email_origen
     message["To"] = email_destino
-    message["Cc"] = "jmaluendasbautista@gmail.com"
+    # message["Cc"] = ", ".join(cc_emails)
     message["Subject"] = "Acceso a Nuevo Aplicativo(5Apps) Para la Creación de Informes"
 
     body = f"""
@@ -37,14 +37,14 @@ def send_email(email, first_name, last_name):
                 </div>
                 <div style="margin-top: 20px; line-height: 1.6; color: #000;">
                     <p>Estimado {first_name} {last_name},</p>
-                    <p color: #000 !important;>De antemano, reciba un cordial saludo del Departamento de Tecnologias de Berlinas del Fonce S.A.,</p>
+                    <p color: #000 !important;>De antemano, reciba un cordial saludo del Departamento de Tecnologías de Berlinas del Fonce S.A.,</p>
                     <p color: #000 !important;>Nos complace notificarle su acceso al nuevo aplicativo(<strong style="color: #009944">5Apps</strong>), donde va a poder visualizar y descargar información importante y necesaria para el desarrollo de sus operaciones.</p>
-                    <p color: #000 !important;>Cabe recalcar que la capacitacion se va a realizar de manera presencial donde se daran las instrucciones de acceso y manejo del aplicativo, por lo tanto le solicito me indique la fecha y hora para brindarla(No durara mas de 10 minutos).</p>
-                    <p color: #000 !important;>A continuacion el link de acceso a <strong style="color: #009944">5Apps</strong> y su respectivo usuario y contraseña</p>
+                    <p color: #000 !important;>Cabe recalcar que la capacitación se va a realizar de manera presencial donde se darán las instrucciones de acceso y manejo del aplicativo, por lo tanto, le solicito, me indique la fecha y hora para brindarla(No durará más de 10 minutos).</p>
+                    <p color: #000 !important;>A continuación el link de acceso a <strong style="color: #009944">5Apps</strong> y su respectivo usuario y contraseña</p>
                     <p color: #000 !important;>Link de acceso: <a style="color: #009944" href="http://wsdx.berlinasdelfonce.com">wsdx.berlinasdelfonce.com</a><br/>
                     Usuario: PBECERRA<br/>
                     Contraseña: PBECERRA</p>
-                    <p color: #000 !important;>Se le ha dado acceso a 7 modulos de operaciones los cuales son:</p>
+                    <p color: #000 !important;>Se le ha dado acceso a 7 módulos de operaciones, los cuales son:</p>
                     <p color: #000 !important;>
                     <strong style="color: #009944">> </strong>Busquedas por Fechas<br/>
                     <strong style="color: #009944">> </strong>Consolidado Combustible<br/>
@@ -71,7 +71,8 @@ def send_email(email, first_name, last_name):
         smtp = smtplib.SMTP_SSL("mail.berlinasdelfonce.com")
         smtp.login(email_origen, "PRUEBA2023")
         smtp.sendmail(
-            email_origen, [email_destino, "jmaluendasbautista@gmail.com"], message.as_string())
+            email_origen, [email_destino] + cc_emails, message.as_string())
+        # smtp.sendmail(email_origen, [email_destino] + cc_emails, message.as_string())
         smtp.quit()
         # smtp = smtplib.SMTP_SSL("smtp.gmail.com")
         # smtp.login(email_origen, "tlgtoadfnyqdzoij")
@@ -83,4 +84,4 @@ def send_email(email, first_name, last_name):
         print("No se pudo enviar el correo a ${email} {str(e)}")
 
 
-send_email("jmaluendase@gmail.com", "Pedro", "Becerra")
+# send_email("operaciones@berlinasdelfonce.com", "Pedro", "Becerra")

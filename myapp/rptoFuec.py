@@ -23,21 +23,40 @@ def rptoFuec(request):
             conn = pyodbc.connect(
                 'DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+password)
 
-            data = json.loads(request.body)
-            fecha = data.get('fecha')
+            fecha = request.POST.get('fecha', None)
+            bus = request.POST.get('bus', None)
 
             # Verificar si le fue dada fecha correcta, si no, usar la fecha del equipo
             if fecha:
-                try:
-                    fecha = datetime.strptime(fecha, '%Y-%m-%d %H:%M:%S')
-                except ValueError:
-                    print(fecha)
+                # Extraer partes de la cadena
+                parts = fecha.split()
+                day = int(parts[2])
+                month_str = parts[1]
+                year = int(parts[3])
+                time_str = parts[4]
+
+                # Mapear nombres de meses a números
+                month_mapping = {
+                    'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5, 'Jun': 6,
+                    'Jul': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Dec': 12
+                }
+
+                # Obtener el número del mes
+                month = month_mapping[month_str]
+
+                # Construir el objeto datetime
+                fecha_original = datetime(
+                    year, month, day, *map(int, time_str.split(':')))
+
+                # Formatear la nueva fecha en el formato deseado
+                fecha = fecha_original.strftime('%Y-%m-%d %H:%M:%S')
+
+                print(fecha)
             else:
                 fecha = datetime.now()
 
-            bus = data.get('searchV')
             cursor = conn.cursor()
-            print("Bus: " + bus + " Fecha: " + str(fecha))
+            print("Bus: " + str(bus) + " Fecha: " + str(fecha))
 
             cursor.execute("{CALL RP_FS_BUS (?, ?)}", (bus, fecha))
 
