@@ -29,13 +29,6 @@ class Roles(models.Model):
         Empresas, on_delete=models.CASCADE)
 
 
-class Cargos(models.Model):
-    id_cargo = models.AutoField(primary_key=True)
-    detalle_cargo = models.CharField(max_length=99, unique=True, null=False)
-    id_empresa = models.ForeignKey(Empresas, on_delete=models.CASCADE)
-    estado_cargo = models.BooleanField(default=True)
-
-
 class Colaboradores(models.Model):
     num_documento = models.IntegerField(primary_key=True)
     tipo_documento_id = models.ForeignKey(
@@ -48,7 +41,6 @@ class Colaboradores(models.Model):
     rol_id = models.ForeignKey(Roles, on_delete=models.CASCADE)
     empresa_id = models.ForeignKey(
         Empresas, on_delete=models.CASCADE)
-    cargo_id = models.ForeignKey(Cargos, on_delete=models.CASCADE)
     ciudad = models.CharField(max_length=100, null=False)
     fecha_registro = models.DateTimeField(auto_now_add=True)
 

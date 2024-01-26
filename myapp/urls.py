@@ -2,7 +2,8 @@ from rest_framework import routers
 from django.urls import path, include
 from django.urls import path
 from . import api, views, view_rf, view_rf_for
-from . import crearExcel, rptoFuec, reportes, reporteAlcoholimetria, RptosOperaciones, RptosPlaneacion, RptosContabilidad, Pvu, Tiquetes, Dominicales, RptosConductores
+from . import crearExcel, rptoFuec, reportes, reporteAlcoholimetria, RptosOperaciones, RptosPlaneacion, RptosContabilidad, Pvu, Tiquetes, Dominicales, RptosConductores, RptosComercial, RptosMacarena, RptoHisFuec, RptosMigracion, RptosTaquillas
+from . import RptosMicroseguros
 from . import crearPdf_Wp
 from django.conf import settings
 from django.conf.urls.static import static
@@ -12,7 +13,6 @@ router = routers.DefaultRouter()
 router.register('rol', api.RolesViewSet, "Roles")
 router.register('users', api.ColaboradoresViewSet, "Colaboradores")
 router.register('login', api.LoginViewSet, "Login")
-router.register('cargos', api.CargosViewSet, "Cargos")
 router.register('docsti', api.TipoDocumentoViewSet, "TipoDocumento")
 router.register('Modulos', api.ModulosViewSet, "Modulos")
 router.register('permisos', api.PermisosViewSet, "Permisos")
@@ -87,5 +87,35 @@ urlpatterns = [
     path('RptoConductores/', csrf_exempt(RptosConductores.RptoConductores), name=''),
     path('generarRptoConductores/', csrf_exempt(RptosConductores.generarRptoConductores),
          name='Generacion de reporte en excel de Conductores'),
+    path('RptoComercialEst/', csrf_exempt(RptosComercial.rptoComercial),
+         name='Reporte Estadistica Comercial'),
+    path('rptoCertificados/', csrf_exempt(RptosComercial.rptoCertificados),
+         name='Reporte Estadistica Certificados'),
+    path('generarRptoComercial/', csrf_exempt(RptosComercial.generarRptosComercial),
+         name='Generacion de reporte en excel de Comercial'),
+    path('rptoDomicilios/', csrf_exempt(RptosComercial.rptoDomicilios),
+         name='Reporte Domicilios'),
+    path('RptosMacarena/', csrf_exempt(RptosMacarena.rptosMacarena),
+         name='Reporte Macarena'),
+    path('generarRptosMacarena/', csrf_exempt(RptosMacarena.generarRptosMacarena),
+         name='Generacion de reporte en excel de Macarena'),
+    path('rptoHistoricoFuec/', csrf_exempt(RptoHisFuec.rptoHistoricoFuec),
+         name='Reporte Historico del Fuec'),
+    path('generarRptoFuec/', csrf_exempt(RptoHisFuec.generarRptoFuec),
+         name='Generacion de reporte en excel del FUEC'),
+    path('rptosMigracion/', csrf_exempt(RptosMigracion.rptosMigracion),
+         name='Reporte Historico de Migracion'),
+    path('generarRptosMigracion/', csrf_exempt(RptosMigracion.generarRptosMigracion),
+         name='Generacion de reporte en excel de Migracion'),
+    path('RptoTaquillas/', csrf_exempt(RptosTaquillas.RptoTaquillas),
+         name='Reporte Taquillas Bogota'),
+    path('generarRptoTaquillas/', csrf_exempt(RptosTaquillas.generarRptoTaquillas),
+         name='Reporte Excel Taquillas Bogota'),
+    path('RptoMicroSeguros/', csrf_exempt(RptosMicroseguros.RptoMicroSeguros),
+         name='Reporte MicroSeguros'),
+    path('RptoTiquetesMicroSeguros/', csrf_exempt(RptosMicroseguros.RptoTiquetesMicroSeguros),
+         name='Reporte Tiquetes con MicroSeguros'),
+    path('generarRptoMicroseguros/', csrf_exempt(RptosMicroseguros.generarRptoMicroseguros),
+         name='Reporte Excel de Tiquetes con Microseguros'),
     #     path('export/', crearPdf_Wp.export_pdf, name="export-pdf")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

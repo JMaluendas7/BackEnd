@@ -4,7 +4,6 @@ from django.http import JsonResponse, HttpResponse
 from openpyxl.styles import Font, Alignment
 from openpyxl import load_workbook
 from datetime import datetime
-from dateutil import parser
 from decimal import Decimal
 import pyodbc
 import json
@@ -59,7 +58,7 @@ def rptoOperaciones(request):
                     row_dict[column_name] = value
                 rows_list.append(row_dict)
 
-            # print(rows_list)
+            print(rows_list)
 
             cursor.close()
             conn.close()
@@ -195,6 +194,7 @@ def generarRptoOpeViajes(request):
 
                 cell_colEmp.alignment = Alignment(
                     horizontal='center')
+                cell_colEmp.font = Font(bold=True)
 
                 if Opcion == 0 or Opcion == 1 or Opcion == 20 or Opcion == 26 or Opcion == 29:
                     if SubOpcion == 0 or SubOpcion == 1 or SubOpcion == 2:

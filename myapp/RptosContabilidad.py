@@ -203,6 +203,7 @@ def generarRptoOpeViajes(request):
 
                 cell_colEmp.alignment = Alignment(
                     horizontal='center')
+                cell_colEmp.font = Font(bold=True)
 
                 if Opcion == 0 or Opcion == 1 or Opcion == 20 or Opcion == 26 or Opcion == 29:
                     if SubOpcion == 0 or SubOpcion == 1 or SubOpcion == 2:

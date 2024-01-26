@@ -1,6 +1,6 @@
 from rest_framework import viewsets, permissions
-from .models import TipoDocumento, Empresas, Roles, Cargos, Colaboradores, Login, Modulos, Permisos
-from .serializers import TipoDocumentoSlr, EmpresasSlr, RolesSlr, CargosSlr, ColaboradoresSlr, LoginSlr, ModulosSlr, PermisosSlr
+from .models import TipoDocumento, Empresas, Roles, Colaboradores, Login, Modulos, Permisos
+from .serializers import TipoDocumentoSlr, EmpresasSlr, RolesSlr, ColaboradoresSlr, LoginSlr, ModulosSlr, PermisosSlr
 
 
 class TipoDocumentoViewSet(viewsets.ModelViewSet):
@@ -19,12 +19,6 @@ class RolesViewSet(viewsets.ModelViewSet):
     queryset = Roles.objects.all()
     permission_classes = [permissions.AllowAny]
     serializer_class = RolesSlr
-
-
-class CargosViewSet(viewsets.ModelViewSet):
-    queryset = Cargos.objects.all()
-    permission_classes = [permissions.AllowAny]
-    serializer_class = CargosSlr
 
 
 class ColaboradoresViewSet(viewsets.ModelViewSet):

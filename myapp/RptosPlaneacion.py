@@ -34,6 +34,7 @@ def rptoPlaneacion(request):
             Cadena01 = "VACIO"
             Cadena02 = "VACIO"
             valor01 = 100
+            print(fechaInicio, fechaFinal, EmpiD, Opcion, SubOpcion)
 
             cursor = conn.cursor()
 
@@ -58,7 +59,7 @@ def rptoPlaneacion(request):
                     row_dict[column_name] = value
                 rows_list.append(row_dict)
 
-            # print(rows_list)
+            print(rows_list)
 
             cursor.close()
             conn.close()
@@ -162,6 +163,7 @@ def generarRptoPL(request):
                     cell_colEmp.value = "Tourline Express S.A.S"
                 cell_colEmp.alignment = Alignment(
                     horizontal='center')
+                cell_colEmp.font = Font(bold=True)
 
                 if Opcion == 9:
                     if SubOpcion == 0 or SubOpcion == 1:

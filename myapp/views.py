@@ -4,7 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import JsonResponse
-from .models import Colaboradores, Permisos, Login, TipoDocumento, Roles, Empresas, Token, Cargos
+from .models import Colaboradores, Permisos, Login, TipoDocumento, Roles, Empresas, Token
 from django.contrib.auth import authenticate, logout
 from django.contrib.auth.hashers import make_password
 from django.views.decorators.csrf import csrf_exempt
@@ -35,7 +35,7 @@ def subir_foto(request):
         for chunk in imagen.chunks():
             destination.write(chunk)
 
-    # Aquí podrías guardar la ruta de la imagen en la base de datos si es necesario
+    # Aca debo poner la logica de subida de fotos
 
     return JsonResponse({'mensaje': 'Imagen subida correctamente'})
 
@@ -176,7 +176,6 @@ class ColaboradoresView(ViewSet):
                     'telefono': usuario.telefono,
                     'direccion': usuario.direccion,
                     'email': usuario.email,
-                    'cargo_id': usuario.cargo_id.detalle_cargo,
                     'rol_id': rol_id,
                     'ciudad': usuario.ciudad,
                     'empresa_id': usuario.empresa_id.nombre_empresa,
@@ -213,7 +212,6 @@ class ColaboradoresView(ViewSet):
             tipo_documento_id = TipoDocumento.objects.get(
                 id_tipodocumento=tipo_documento)
             id_rol = Roles.objects.get(id_rol=rol_id)
-            cargo_id = Cargos.objects.get(id_cargo=cargo_id)
             Colaboradores.objects.create(num_documento=num_documento, nombres=nombres, apellidos=apellidos, telefono=telefono, direccion=direccion, email=email,
                                          cargo_id=cargo_id, ciudad=ciudad, tipo_documento_id=tipo_documento_id, rol_id=id_rol, empresa_id=empresa_id)
             response_data = {'mensaje': 'Colaborador creado con éxito'}
