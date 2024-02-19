@@ -4,60 +4,10 @@ from django.http import JsonResponse, HttpResponse
 from openpyxl.styles import Alignment
 from openpyxl import load_workbook
 from datetime import datetime
-from decimal import Decimal
-import pyodbc
 import json
 import pytz
 import os
 import io
-
-
-@csrf_exempt
-@require_http_methods(["POST"])
-def RptoConductores(request):
-    try:
-        if request.method == "POST":
-
-            server = 'd1.berlinasdelfonce.com'
-            database = 'Dynamix'
-            username = 'Developer'
-            password = '123456'
-
-            conn = pyodbc.connect(
-                'DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+password)
-
-            cursor = conn.cursor()
-
-            cursor.execute("{CALL RP_CondvigFICS ()}", ())
-
-            columns = [column[0] for column in cursor.description]
-            results = cursor.fetchall()
-
-            rows_list = []
-            for row in results:
-                row_dict = {}
-                for index, value in enumerate(row):
-                    column_name = columns[index]
-                    if isinstance(value, datetime):
-                        value = value.strftime("%Y-%m-%d %H:%M:%S")
-                    elif isinstance(value, str):
-                        value = value.rstrip()  # Eliminar espacios al final de la cadena
-                    elif isinstance(value, Decimal):  # Verificar si el valor es Decimal
-                        value = float(value)  # Convertir Decimal a float
-                        value = round(value)  # Redondear si es necesario
-                    row_dict[column_name] = value
-                rows_list.append(row_dict)
-
-            print(rows_list)
-
-            cursor.close()
-            conn.close()
-
-            return JsonResponse({'results': rows_list})
-        else:
-            print("error")
-    except pyodbc.Error as ex:
-        print("Error:", ex)
 
 
 @csrf_exempt
@@ -69,13 +19,47 @@ def generarRptoConductores(request):
             # Decodificar los datos JSON de la solicitud
             results = json.loads(request.body)
 
-            datos = results['results']
+            datos = json.loads(results['results'])
+            Opcion = int(results['Opcion'])
+            try:
+                year = results['year']
+                month = results['month']
+            except:
+                pass
 
             # Obtener la ruta absoluta de la plantilla Excel en el mismo directorio que el script
             script_dir = os.path.dirname(__file__)
 
-            plantilla_path = os.path.join(
-                script_dir, '../docs/Plantillas/Plantilla_Rpto_Conductores.xlsx')
+            if Opcion == 0:
+                plantilla_path = os.path.join(
+                    script_dir, '../docs/Plantillas/Plantilla_Rpto_TurismoEstadisticaViajeroFrecuenteBerlinas.xlsx')
+            elif Opcion == 1:
+                plantilla_path = os.path.join(
+                    script_dir, '../docs/Plantillas/Plantilla_Rpto_TurismoEstadisticaViajeroFrecuenteServicioEspecial.xlsx')
+            elif Opcion == 2:
+                plantilla_path = os.path.join(
+                    script_dir, '../docs/Plantillas/Plantilla_Rpto_TurismoEstadisticaViajeroFrecuenteDuo.xlsx')
+            elif Opcion == 3:
+                plantilla_path = os.path.join(
+                    script_dir, '../docs/Plantillas/Plantilla_Rpto_TurismoEstadisticaViajerosFrecuentes.xlsx')
+            elif Opcion == 4:
+                plantilla_path = os.path.join(
+                    script_dir, '../docs/Plantillas/Plantilla_Rpto_TurismoEstadisticaTiqueteViajeroFrecuenteBerlinas.xlsx')
+            elif Opcion == 5:
+                plantilla_path = os.path.join(
+                    script_dir, '../docs/Plantillas/Plantilla_Rpto_TurismoEstadisticaTiqueteViajeroFrecuenteServicioEspecial.xlsx')
+            elif Opcion == 6:
+                plantilla_path = os.path.join(
+                    script_dir, '../docs/Plantillas/Plantilla_Rpto_TurismoEstadisticaTiqueteViajeroFrecuenteDuo.xlsx')
+            elif Opcion == 7:
+                plantilla_path = os.path.join(
+                    script_dir, '../docs/Plantillas/Plantilla_Rpto_TurismoEstadisticaVentaOnline.xlsx')
+            elif Opcion == 8:
+                plantilla_path = os.path.join(
+                    script_dir, '../docs/Plantillas/Plantilla_Rpto_TurismoEstadisticaProspectoParaIngresarAViajeroFrecuente.xlsx')
+            elif Opcion == 99:
+                plantilla_path = os.path.join(
+                    script_dir, '../docs/Plantillas/Plantilla_Rpto_Reportes_RptoConductores.xlsx')
 
             # Verificar si existe el archivo
             if os.path.exists(plantilla_path):
@@ -92,7 +76,6 @@ def generarRptoConductores(request):
                 current_datetime_utc = datetime.now(pytz.utc)
 
                 # Convertir la hora a la zona horaria deseada
-                # timezone = pytz.timezone('America/Bogota')
                 current_datetime_bogota = current_datetime_utc.astimezone(
                     pytz.timezone('America/Bogota'))
 
@@ -101,81 +84,31 @@ def generarRptoConductores(request):
                 current_time = current_datetime_bogota.strftime('%H:%M:%S')
 
                 # Ubicación para month y year del reporte
-                start_column_colMes = 'I'
-                start_row_colMes = 6
-                start_column_colYear = 'G'
-                start_row_colYear = 6
+                try:
+                    cell_year = sheet['D6']
+                    cell_year.value = year
 
-                # Ubicación específica para la columnas
-                start_column_col1 = 'B'
-                start_row_col1 = 8
-
-                start_column_col2 = 'C'
-                start_row_col2 = 8
-
-                start_column_col3 = 'D'
-                start_row_col3 = 8
-
-                start_column_col4 = 'E'
-                start_row_col4 = 8
-
-                start_column_col5 = 'F'
-                start_row_col5 = 8
-
-                start_column_col6 = 'G'
-                start_row_col6 = 8
+                    cell_month = sheet['F6']
+                    cell_month.value = month
+                except:
+                    pass
 
                 # Escribir la fecha actual en la celda B6
                 cell_c6 = sheet['B6']
                 cell_c6.value = current_date
 
                 # Escribir la hora actual en la celda D6
-                cell_d6 = sheet['D6']
+                cell_d6 = sheet['A6']
                 cell_d6.value = current_time
 
                 for index, colaborador in enumerate(datos, start=1):
                     for col_index, (col_name, col_value) in enumerate(colaborador.items(), start=1):
-                        # Escribir en la columna 1
-                        if col_index == 1:
-                            cell_col1 = sheet[f'{start_column_col1}{start_row_col1 + index}']
-                            cell_col1.value = col_value
-                            cell_col1.alignment = Alignment(
-                                horizontal='center')
-
-                        # Escribir en la columna 2
-                        elif col_index == 2:
-                            cell_col2 = sheet[f'{start_column_col2}{start_row_col2 + index}']
-                            cell_col2.value = col_value
-                            cell_col2.alignment = Alignment(
-                                horizontal='center')
-
-                        # Escribir en la columna 3
-                        elif col_index == 3:
-                            cell_col3 = sheet[f'{start_column_col3}{start_row_col3 + index}']
-                            cell_col3.value = col_value
-                            cell_col3.alignment = Alignment(
-                                horizontal='center')
-
-                        # Escribir en la columna 4
-                        elif col_index == 4:
-                            cell_col4 = sheet[f'{start_column_col4}{start_row_col4 + index}']
-                            cell_col4.value = col_value
-                            cell_col4.alignment = Alignment(
-                                horizontal='center')
-
-                        # Escribir en la columna 5
-                        elif col_index == 5:
-                            cell_col5 = sheet[f'{start_column_col5}{start_row_col5 + index}']
-                            cell_col5.value = col_value
-                            cell_col5.alignment = Alignment(
-                                horizontal='center')
-
-                        # Escribir en la columna 6
-                        elif col_index == 6:
-                            cell_col6 = sheet[f'{start_column_col6}{start_row_col6 + index}']
-                            cell_col6.value = col_value
-                            cell_col6.alignment = Alignment(
-                                horizontal='center')
+                        if col_index <= 19:  # Hacer el bucle solo hasta la columna 19
+                            column_letter = chr(ord('B') + col_index - 1)
+                            # 8 es el numero de fila start
+                            cell_col = sheet[f'{column_letter}{8 + index}']
+                            cell_col.value = col_value
+                            cell_col.alignment = Alignment(horizontal='center')
 
                 # Crear un objeto BytesIO para guardar temporalmente el archivo Excel
                 buffer = io.BytesIO()
@@ -185,14 +118,12 @@ def generarRptoConductores(request):
                 # Crear la respuesta con el nuevo archivo Excel
                 response = HttpResponse(
                     buffer.getvalue(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-                response['Content-Disposition'] = 'attachment; filename=Plantilla_Rpto_CuotaAdmin.xlsx'
+                response['Content-Disposition'] = 'attachment; filename=Result.xlsx'
 
                 return response
             else:
                 return JsonResponse({'error': 'El archivo de la plantilla no fue encontrado'})
-
         else:
             return JsonResponse({'error': 'Se esperaba una solicitud POST'})
-
     else:
         return JsonResponse({'error': 'Se esperaba una solicitud POST'})

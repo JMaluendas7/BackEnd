@@ -3,8 +3,7 @@ import pyodbc
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-
-# Función para enviar correo electrónico
+from AdminDBUtilsConn import ConexionDB
 
 
 def send_email(identificacion, nombre, apellido, correo):
@@ -72,16 +71,8 @@ def send_email(identificacion, nombre, apellido, correo):
         print(f"No se pudo enviar el correo a {correo} {str(e)}")
 
 
-# Parámetros de conexión a la base de datos
-server = '172.16.0.25'
-database = 'DynamiX'
-username = 'developer'
-password = '123456'
-
-
 # Conectarse a la base de datos y ejecutar la consulta SQL
-conn = pyodbc.connect('DRIVER={SQL Server};SERVER=' + server +
-                      ';DATABASE=' + database + ';UID=' + username + ';PWD=' + password)
+conn = ConexionDB()
 cursor = conn.cursor()
 
 query = """

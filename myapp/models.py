@@ -35,14 +35,12 @@ class Colaboradores(models.Model):
         TipoDocumento, on_delete=models.CASCADE)
     nombres = models.CharField(max_length=99, null=False)
     apellidos = models.CharField(max_length=99, null=False)
-    telefono = models.IntegerField(null=False)
-    direccion = models.CharField(max_length=150, null=False)
     email = models.EmailField(max_length=150, null=False)
     rol_id = models.ForeignKey(Roles, on_delete=models.CASCADE)
     empresa_id = models.ForeignKey(
         Empresas, on_delete=models.CASCADE)
-    ciudad = models.CharField(max_length=100, null=False)
     fecha_registro = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True, null=False)
 
 
 class Login(AbstractUser):

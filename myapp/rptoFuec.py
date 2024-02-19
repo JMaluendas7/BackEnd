@@ -1,5 +1,6 @@
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
+from .AdminDBUtilsConn import ConexionDB
 from django.http import JsonResponse
 from datetime import datetime
 from .models import RptoFuec
@@ -14,52 +15,17 @@ import os
 def rptoFuec(request):
     try:
         if request.method == "POST":
-
-            server = 'd1.berlinasdelfonce.com'
-            database = 'Dynamix'
-            username = 'Developer'
-            password = '123456'
-
-            conn = pyodbc.connect(
-                'DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+password)
-
             fecha = request.POST.get('fecha', None)
             bus = request.POST.get('bus', None)
 
-            # Verificar si le fue dada fecha correcta, si no, usar la fecha del equipo
-            if fecha:
-                # Extraer partes de la cadena
-                parts = fecha.split()
-                day = int(parts[2])
-                month_str = parts[1]
-                year = int(parts[3])
-                time_str = parts[4]
-
-                # Mapear nombres de meses a números
-                month_mapping = {
-                    'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5, 'Jun': 6,
-                    'Jul': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Dec': 12
-                }
-
-                # Obtener el número del mes
-                month = month_mapping[month_str]
-
-                # Construir el objeto datetime
-                fecha_original = datetime(
-                    year, month, day, *map(int, time_str.split(':')))
-
-                # Formatear la nueva fecha en el formato deseado
-                fecha = fecha_original.strftime('%Y-%m-%d %H:%M:%S')
-
-                print(fecha)
-            else:
+            if not fecha:
                 fecha = datetime.now()
 
-            cursor = conn.cursor()
             print("Bus: " + str(bus) + " Fecha: " + str(fecha))
 
+            conn = ConexionDB()
+            cursor = conn.cursor()
             cursor.execute("{CALL RP_FS_BUS (?, ?)}", (bus, fecha))
-
             results = cursor.fetchall()
 
             rows_list = []
@@ -74,7 +40,7 @@ def rptoFuec(request):
             cursor.close()
             conn.close()
 
-            return JsonResponse({'results': rows_list})
+            return JsonResponse({'results': [rows_list]})
         else:
             print("error")
     except pyodbc.Error as ex:
@@ -98,48 +64,41 @@ def convert_to_dict(row, columns):
 
 @csrf_exempt
 @require_http_methods(["POST"])
-def rptoFuecPDF2(request):
-    try:
-        if request.method == "POST":
-            data = request.body
-            Nviaje = json.loads(data).get('viaje')
-            Motivo = 'TRANSPORTE DE PARTICULARES (GRUPO - PERSONA NATURAL)'
-            Cliente = 860015624
-            op = 1
-            server = 'd1.berlinasdelfonce.com'
-            database = 'Dynamix'
-            username = 'Developer'
-            password = '123456'
-            conn = pyodbc.connect(
-                'DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+password)
+def rptoFuecPDF(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        print(data)
+        Nviaje = int(data['viaje'])
+        Motivo = 'TRANSPORTE DE PARTICULARES (GRUPO - PERSONA NATURAL)'
+        Cliente = 860015624
+        op = 1
 
-            cursor = conn.cursor()
-            cursor.execute(
-                "{CALL RP_Formato_ServicioEspecial (?, ?, ?, ?)}", (Nviaje, Motivo, Cliente, op))
+        conn = ConexionDB()
+        cursor = conn.cursor()
+        cursor.execute(
+            "{CALL RP_Formato_ServicioEspecial (?, ?, ?, ?)}", (Nviaje, Motivo, Cliente, op))
 
-            cursor.execute("SELECT [Viaje], [FechaPartida], [Bus], [Placa], [Descripcion_Clase], [Descripcion_Marca], [Modelo], [Origen], [Destino], [Empresa_Registrado], [Nit_Emp], [dir_Emp], [tel_emp], [tel_emp1], [ema_emp], [Ciudad_Empresa], [Num_Tarjeta_Operacion], [Nombre_Conductor1], [Apellido_Conductor1], [Cedula_Conductor1], [Pase1_Conductor1], [fechavencimiento1_Conductor1], [Nombre_Conductor2], [Apellido_Conductor2], [Cedula_Conductor2], [Pase1_Conductor2], [fechavencimiento1_Conductor2], [NIT_Cliente], [Nombre_Cliente], [Direccion_Cliente], [Ciudad_Cliente], [Telefono_Cliente], [Objeto_Contrato], [Rep_cedula], [Rep_Apellidos], [Rep_Nombres], [Rep_Telefono], [Consecutivo_FUEC], [Modificar], [Talonario], [Usuario], [Fechasistema] FROM [DynamiX].[dbo].[FUEC_Transaccion] WHERE Viaje = ?", Nviaje)
-            row = cursor.fetchone()
-            # print(row)
+        cursor.execute("SELECT [Viaje], [FechaPartida], [Bus], [Placa], [Descripcion_Clase], [Descripcion_Marca], [Modelo], [Origen], [Destino], [Empresa_Registrado], [Nit_Emp], [dir_Emp], [tel_emp], [tel_emp1], [ema_emp], [Ciudad_Empresa], [Num_Tarjeta_Operacion], [Nombre_Conductor1], [Apellido_Conductor1], [Cedula_Conductor1], [Pase1_Conductor1], [fechavencimiento1_Conductor1], [Nombre_Conductor2], [Apellido_Conductor2], [Cedula_Conductor2], [Pase1_Conductor2], [fechavencimiento1_Conductor2], [NIT_Cliente], [Nombre_Cliente], [Direccion_Cliente], [Ciudad_Cliente], [Telefono_Cliente], [Objeto_Contrato], [Rep_cedula], [Rep_Apellidos], [Rep_Nombres], [Rep_Telefono], [Consecutivo_FUEC], [Modificar], [Talonario], [Usuario], [Fechasistema] FROM [DynamiX].[dbo].[FUEC_Transaccion] WHERE Viaje = ?", Nviaje)
+        row = cursor.fetchone()
+        # print(row)
 
-            if row is not None:
-                columns = [column[0] for column in cursor.description]
-                converted_row = convert_to_dict(row, columns)
+        if row is not None:
+            columns = [column[0] for column in cursor.description]
+            converted_row = convert_to_dict(row, columns)
 
-                # Conversion a diccionario
-                resultss = dict(zip(columns, converted_row))
-                results = {key: value.rstrip() if isinstance(
-                    value, str) else value for key, value in resultss.items()}
+            # Conversion a diccionario
+            resultss = dict(zip(columns, converted_row))
+            results = {key: value.rstrip() if isinstance(
+                value, str) else value for key, value in resultss.items()}
 
-                conn.commit()
-                conn.close()
+            conn.commit()
+            conn.close()
 
-                return JsonResponse({'data': results})
-            else:
-                return JsonResponse({'error': 'No se encontraron resultados para el viaje especificado'})
+            return JsonResponse({'results': results})
         else:
-            print("error")
-    except pyodbc.Error as ex:
-        print("Error:", ex)
+            return JsonResponse({'error': 'No se encontraron resultados para el viaje especificado'})
+    else:
+        print("error")
 
 
 def saveRpto(request):

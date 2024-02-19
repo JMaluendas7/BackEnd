@@ -1,28 +1,23 @@
 from rest_framework.views import APIView
 from rest_framework.viewsets import ViewSet
-from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from rest_framework import status
+from django.utils import timezone
 from django.http import JsonResponse
-from .models import Colaboradores, Permisos, Login, TipoDocumento, Roles, Empresas, Token
 from django.contrib.auth import authenticate, logout
 from django.contrib.auth.hashers import make_password
-from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-import jwt
-
-
-import hashlib
-import base64
-from django.utils import timezone
-
-# En views.py
+from .models import Colaboradores, Permisos, Login, TipoDocumento, Roles, Empresas, Token
 from .envioCorreos import send_email
+import hashlib
 import secrets
+import base64
 import string
+import jwt
 import os
-
 from operator import itemgetter  # Para ordenar los items y subitems
 
 
@@ -173,11 +168,8 @@ class ColaboradoresView(ViewSet):
                     'num_documento': usuario.num_documento,
                     'nombres': usuario.nombres,
                     'apellidos': usuario.apellidos,
-                    'telefono': usuario.telefono,
-                    'direccion': usuario.direccion,
                     'email': usuario.email,
                     'rol_id': rol_id,
-                    'ciudad': usuario.ciudad,
                     'empresa_id': usuario.empresa_id.nombre_empresa,
                     'fecha_registro': usuario.fecha_registro,
                 })
@@ -202,10 +194,7 @@ class ColaboradoresView(ViewSet):
             nombres = request.POST.get('nombre')
             apellidos = request.POST.get('apellido')
             email = request.POST.get('email')
-            direccion = request.POST.get('direccion')
-            ciudad = request.POST.get('ciudad')
             telefono = request.POST.get('telefono')
-            cargo_id = request.POST.get('cargo_id')
             empresa_id = request.POST.get('empresa_id')
             empresa_id = Empresas.objects.get(id_empresa=empresa_id)
             rol_id = request.POST.get('rol_id')
@@ -221,7 +210,6 @@ class ColaboradoresView(ViewSet):
     def put(self, request, id, format=None):
         try:
             colaborador = Colaboradores.objects.get(num_documento=id)
-
             data_to_update = request.data
             print(data_to_update)
             colaborador.nombres = data_to_update.get(
@@ -231,14 +219,6 @@ class ColaboradoresView(ViewSet):
             colaborador.telefono = data_to_update.get(
                 'telefono', colaborador.telefono)
             colaborador.email = data_to_update.get('email', colaborador.email)
-            # colaborador.cargo_id = data_to_update.get(
-            #     'cargo_id', colaborador.cargo_id)
-            colaborador.direccion = data_to_update.get(
-                'direccion', colaborador.direccion)
-            colaborador.ciudad = data_to_update.get(
-                'ciudad', colaborador.ciudad)
-            # colaborador.rol_id = data_to_update.get(
-            #     'rol_id', colaborador.rol_id)
             emp = data_to_update.get('empresa_id', colaborador.empresa_id)
             print(emp)
             empresa_id = Empresas.objects.get(id_empresa=emp)

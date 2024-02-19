@@ -4,68 +4,10 @@ from django.http import JsonResponse, HttpResponse
 from openpyxl.styles import Font, Alignment
 from openpyxl import load_workbook
 from datetime import datetime
-from dateutil import parser
-from decimal import Decimal
-import pyodbc
 import json
 import pytz
 import os
 import io
-
-
-@csrf_exempt
-@require_http_methods(["POST"])
-def rptoAlcoholimetria(request):
-    try:
-        if request.method == "POST":
-
-            server = 'd1.berlinasdelfonce.com'
-            database = 'Dynamix'
-            username = 'Developer'
-            password = '123456'
-
-            conn = pyodbc.connect(
-                'DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+password)
-
-            FechaDesde = request.POST.get('startDate', None)
-            FechaHasta = request.POST.get('endDate', None)
-            operacion = request.POST.get('concepto', None)
-            EmpId_Param = request.POST.get('empresa', None)
-            Valor_Prueba = "1000"
-
-            cursor = conn.cursor()
-
-            cursor.execute("{CALL RP_Prueba_Alcoholimetria (?, ?, ?, ?, ?)}",
-                           (EmpId_Param, FechaDesde, FechaHasta, Valor_Prueba, operacion))
-
-            columns = [column[0] for column in cursor.description]
-            results = cursor.fetchall()
-
-            rows_list = []
-            for row in results:
-                row_dict = {}
-                for index, value in enumerate(row):
-                    column_name = columns[index]
-                    if isinstance(value, datetime):
-                        value = value.strftime("%Y-%m-%d %H:%M:%S")
-                    elif isinstance(value, str):
-                        value = value.rstrip()  # Eliminar espacios al final de la cadena
-                    elif isinstance(value, Decimal):  # Verificar si el valor es Decimal
-                        value = float(value)  # Convertir Decimal a float
-                        value = round(value)  # Redondear si es necesario
-                    row_dict[column_name] = value
-                rows_list.append(row_dict)
-
-            print(rows_list)
-
-            cursor.close()
-            conn.close()
-
-            return JsonResponse({'results': rows_list})
-        else:
-            print("error")
-    except pyodbc.Error as ex:
-        print("Error:", ex)
 
 
 @csrf_exempt
