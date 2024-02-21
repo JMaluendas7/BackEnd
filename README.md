@@ -49,13 +49,13 @@ El ambiente de desarrollo de 5Apps se debe guardar en una carpeta (`5Apps`).
 Haz un fork del repositorio.
 1. Crea una nueva rama
    ```bash
-   git checkout -b feature/mejora
+   git checkout -b username/nombreMejora
 2. Realiza tus cambios y haz commit de ellos.
    ```bash
-   git commit -am 'Añade una mejora'
+   git commit -am 'Descripcion Mejora'
 4. Sube tus cambios a la rama.
    ```bash
-   git push origin feature/mejora
+   git push origin username/nombreMejora
 Abre un pull request.
 
 ## Licencia
