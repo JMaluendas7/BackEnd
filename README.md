@@ -21,16 +21,22 @@ El ambiente de desarrollo de 5Apps se debe guardar en una carpeta (`5Apps`).
    ```bash
    git config --global user.name "Nombre"
    git config --global user.email "correo@dominio.com"
-   git clone https://github.com/JMaluendas7/FrontEnd.git
-3. Acceder a la carpeta FrontEnd en la cual queda alojado el proyecto clonado.
+   git clone https://github.com/JMaluendas7/BackEnd.git
+2. Acceder a la carpeta BackEnd en la cual queda alojado el proyecto clonado.
    ```bash
-   cd FrontEnd
-5. Realizar la installacion de Vite
+   cd BackEnd
+3. Crear el entorno virtual
    ```bash
-   npm install vite --save-dev
-7. Ya puede desplegar el proyecto en ambiente de desarrollo con:
+   virtualenv venv
+4. Activacion del entorno virtual
    ```bash
-   npm run dev
+   venv\Scripts\activate
+5. Intalamos todas las librerias que requiere el proyecto.
+   ```bash
+   pip install -r requirements.txt
+6. Despleglamos el BackEnd.
+   ```bash
+   python manage.py runserver 0.0.0.0:9000
 
 ## Uso
 
