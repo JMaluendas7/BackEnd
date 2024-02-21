@@ -9,9 +9,11 @@ import io
 def reconocimiento_facial(request):
     print("Origen de la solicitud:", request.headers.get('Origin'))
     if request.method == 'POST':
-        # Recibe la foto en base64 desde el front
+        # Recibe la foto en base64 desde el Front
         image_data = request.FILES.get('imageData')
 
+        # Lista de imagenes con las que se compara el fotograma que envia el Front
+        # Esta lista se debe tomar de Base de Datos
         reference_images_list = ["100567890.jpg", "Marcela.jpg"]
 
         for image_name in reference_images_list:
@@ -20,7 +22,7 @@ def reconocimiento_facial(request):
             # Lee la imagen de referencia con OpenCV
             reference_image = cv2.imread(image_path, 0)
 
-            # Convertir la imagen a un formato utilizable por OpenCV
+            # Convierte la imagen a un formato utilizable por OpenCV
             nparr = np.frombuffer(image_data.read(), np.uint8)
             img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
@@ -50,18 +52,18 @@ def reconocimiento_facial(request):
                     return JsonResponse({'user_id': recognized_user, 'message': f'Usuario reconocido: {recognized_user}'})
 
             # Método con face_recognition
-            image_data.seek(0)  # Reiniciar el cursor de lectura del archivo
+            image_data.seek(0)  # Reinicia el cursor de lectura del archivo
             current_image = face_recognition.load_image_file(
                 io.BytesIO(image_data.read()))
             current_image = cv2.cvtColor(
-                current_image, cv2.COLOR_BGR2RGB)  # Convertir a formato RGB
+                current_image, cv2.COLOR_BGR2RGB)  # Pasa a formato RGB
 
             current_encoding = face_recognition.face_encodings(current_image)
 
             if not current_encoding:
                 return JsonResponse({'message': 'No se encontró ningún rostro en la imagen'}, status=400)
 
-            # Convertir la imagen de referencia a formato RGB
+            # Convierte la imagen de referencia a formato RGB
             reference_image = cv2.cvtColor(reference_image, cv2.COLOR_BGR2RGB)
             reference_encoding = face_recognition.face_encodings(reference_image)[
                 0]

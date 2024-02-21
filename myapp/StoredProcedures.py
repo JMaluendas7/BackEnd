@@ -188,7 +188,7 @@ def RP_Consultas05(request):
 
             rows_list = execute_stored_procedure("{CALL RP_Consultas05 (?, ?, ?, ?, ?, ?, ?, ?)}",
                                                  (Empid, fechaInicio, fechaFinal, Opcion, SubOpcion, Cadena01, Cadena02, valor))
-            return JsonResponse({'results': [rows_list]})
+            return JsonResponse({'results': rows_list})
         except pyodbc.Error as ex:
             return JsonResponse({'error': 'Error de base de datos'}, status=500)
     else:
@@ -313,7 +313,7 @@ def RP_Consultas04(request):
             valor01 = 100
             rows_list = execute_stored_procedure(
                 "{CALL RP_Consultas04 (?, ?, ?, ?, ?, ?, ?, ?)}", (EmpiD, fechaInicio, fechaFinal, Opcion, SubOpcion, Cadena01, Cadena02, valor01))
-            return JsonResponse({'results': [rows_list]})
+            return JsonResponse({'results': rows_list})
         except pyodbc.Error as ex:
             return JsonResponse({'error': 'Error de base de datos'}, status=500)
     else:
@@ -332,7 +332,7 @@ def RP_MIGRACION(request):
             Opcion = request.POST.get('Opcion', None)
             rows_list = execute_stored_procedure("{CALL RP_MIGRACION (?, ?, ?, ?, ?)}",
                                                  (EmpID, Viaje, Terminal, Fecha, Opcion))
-            return JsonResponse({'results': [rows_list]})
+            return JsonResponse({'results': rows_list})
         except pyodbc.Error as ex:
             return JsonResponse({'error': 'Error de base de datos'}, status=500)
     else:
@@ -365,7 +365,7 @@ def RPT_EstadisticaXTaquilla(request):
 
             rows_list = execute_stored_procedure(
                 "{CALL RPT_EstadisticaXTaquilla (?, ?, ?, ?, ?, ?)}", (Mes, Year, Fecha, Documento, Opcion, Taquilla))
-            return JsonResponse({'results': [rows_list]})
+            return JsonResponse({'results': rows_list})
         except pyodbc.Error as ex:
             return JsonResponse({'error': 'Error de base de datos'}, status=500)
     else:

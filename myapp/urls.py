@@ -7,13 +7,13 @@ from rest_framework import routers
 from django.conf import settings
 
 router = routers.DefaultRouter()
-router.register('rol', api.RolesViewSet, "Roles")
+router.register('roles', api.RolesViewSet, "Roles")
 router.register('login', api.LoginViewSet, "Login")
 router.register('users', api.ColaboradoresViewSet, "Colaboradores")
 router.register('docsti', api.TipoDocumentoViewSet, "TipoDocumento")
-router.register('Modulos', api.ModulosViewSet, "Modulos")
+router.register('modulos', api.ModulosViewSet, "Modulos")
 router.register('permisos', api.PermisosViewSet, "Permisos")
-router.register('bussines', api.EmpresasViewSet, "Empresas")
+router.register('empresas', api.EmpresasViewSet, "Empresas")
 
 urlpatterns = [
     path('api/', include(router.urls)),

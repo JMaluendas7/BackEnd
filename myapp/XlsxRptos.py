@@ -450,12 +450,16 @@ def XlsxRPT_EstadisticaXTaquilla(request):
             datos = json.loads(results['results'])
             month = results['Month']
             year = results['Year']
+            Opcion = int(results['Opcion'])
 
             # Obtener la ruta absoluta de la plantilla Excel en el mismo directorio que el script
             script_dir = os.path.dirname(__file__)
-
-            plantilla_path = os.path.join(
-                script_dir, '../docs/Plantillas/Plantilla_Rpto_PuntosDeVentaPaxVendidosBogota.xlsx')
+            if Opcion == 0:
+                plantilla_path = os.path.join(
+                    script_dir, '../docs/Plantillas/Plantilla_Rpto_PuntosDeVentaVentasTaquillerosBogota.xlsx')
+            elif Opcion == 1:
+                plantilla_path = os.path.join(
+                    script_dir, '../docs/Plantillas/Plantilla_Rpto_PuntosDeVentaVentasTaquillerosBogotaFecha.xlsx')
 
             # Verificar si existe el archivo
             if os.path.exists(plantilla_path):
